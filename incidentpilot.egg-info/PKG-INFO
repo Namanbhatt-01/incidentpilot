@@ -1,0 +1,31 @@
+Metadata-Version: 2.4
+Name: incidentpilot
+Version: 0.1.0
+Summary: Autonomous, human-supervised AI SRE incident response team built natively on Switch
+Author: IncidentPilot Core Team
+License: Apache-2.0
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: pydantic>=2.9.0
+Requires-Dist: pydantic-settings>=2.5.0
+Requires-Dist: httpx>=0.27.0
+Requires-Dist: fastapi>=0.115.0
+Requires-Dist: uvicorn>=0.30.0
+Requires-Dist: pyyaml>=6.0.2
+Requires-Dist: rich>=13.8.0
+Requires-Dist: tenacity>=9.0.0
+Provides-Extra: ai
+Requires-Dist: google-genai>=0.1.1; extra == "ai"
+Requires-Dist: openai>=1.59.0; extra == "ai"
+Requires-Dist: chromadb>=0.5.0; extra == "ai"
+Requires-Dist: fastembed>=0.4.0; extra == "ai"
+Provides-Extra: dev
+Requires-Dist: pytest>=8.3.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.24.0; extra == "dev"
+Requires-Dist: pytest-cov>=5.0.0; extra == "dev"
+Requires-Dist: ruff>=0.7.0; extra == "dev"
+Requires-Dist: mypy>=1.13.0; extra == "dev"
+Requires-Dist: types-pyyaml>=6.0.12; extra == "dev"
+Requires-Dist: types-requests>=2.32.0; extra == "dev"
+Dynamic: license-file

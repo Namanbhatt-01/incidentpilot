@@ -1,0 +1,55 @@
+name: incidentpilot-sandbox
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: orders
+      POSTGRES_PASSWORD: orders
+      POSTGRES_DB: orders
+    ports:
+      - "5433:5432"  # Isolated from Switch port 5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orders -d orders"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--maxmemory", "50mb", "--maxmemory-policy", "allkeys-lru", "--save", ""]
+    ports:
+      - "16379:6379"  # Isolated from default host 6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  orders-api:
+    build:
+      context: ../
+      dockerfile: sandbox/services/orders_api/Dockerfile
+    image: incidentpilot/orders-api:latest
+    restart: unless-stopped
+    environment:
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://orders:orders@postgres:5432/orders
+      FAIL_MODE: "none"
+    ports:
+      - "8080:8000"  # Isolated from Switch Core port 8000!
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    restart: unless-stopped
+    command:
+      - --storage.tsdb.retention.time=2h
+    ports:
+      - "9090:9090"

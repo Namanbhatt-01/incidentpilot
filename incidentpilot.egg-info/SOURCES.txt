@@ -1,0 +1,7 @@
+LICENSE
+pyproject.toml
+incidentpilot.egg-info/PKG-INFO
+incidentpilot.egg-info/SOURCES.txt
+incidentpilot.egg-info/dependency_links.txt
+incidentpilot.egg-info/requires.txt
+incidentpilot.egg-info/top_level.txt
