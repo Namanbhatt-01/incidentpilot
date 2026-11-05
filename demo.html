@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IncidentPilot — Autonomous Multi-Agent SRE War Room on Switch</title>
+  <style>
+    :root {
+      --bg-dark: #0a0d14;
+      --bg-panel: #111726;
+      --bg-card: #182238;
+      --border: #233252;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-blue: #38bdf8;
+      --accent-purple: #a855f7;
+      --accent-green: #22c55e;
+      --accent-red: #ef4444;
+      --accent-amber: #f59e0b;
+      --switch-orange: #ff7849;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      background: #07090f;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-badge {
+      background: linear-gradient(135deg, #ff7849, #ea580c);
+      color: white;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+    .title-text h1 {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .title-text p {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .fsm-badge {
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-family: ui-monospace, monospace;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .fsm-pulse {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.3); }
+      100% { opacity: 0.4; transform: scale(0.9); }
+    }
+    .main-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr 340px;
+      flex: 1;
+      overflow: hidden;
+    }
+    /* LEFT SIDEBAR */
+    .sidebar {
+      background: #0d121f;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 18px;
+      overflow-y: auto;
+    }
+    .sidebar-section h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+    .scenario-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text);
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .scenario-btn:hover {
+      border-color: var(--accent-blue);
+      background: #172138;
+    }
+    .scenario-btn.active {
+      border-color: var(--switch-orange);
+      background: rgba(255, 120, 73, 0.12);
+    }
+    .scenario-name {
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .scenario-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .agent-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      background: var(--bg-panel);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .agent-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 11px;
+    }
+    /* CENTER CHAT */
+    .chat-view {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-dark);
+      overflow: hidden;
+    }
+    .chat-header {
+      padding: 12px 20px;
+      background: #0f1524;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+    .chat-log {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 90%;
+      animation: fadeIn 0.25s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .msg-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .msg-body {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .msg-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+    }
+    .msg-author {
+      font-weight: 700;
+    }
+    .msg-role-tag {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .msg-time {
+      color: var(--text-dim);
+    }
+    .approval-card {
+      background: linear-gradient(145deg, #182238, #1c2742);
+      border: 1px solid #3b82f6;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .approval-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-blue);
+    }
+    .approval-digest {
+      font-family: ui-monospace, monospace;
+      font-size: 10px;
+      background: #090e1a;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #233252;
+      color: #38bdf8;
+      word-break: break-all;
+    }
+    .approval-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .btn-approve {
+      background: #22c55e;
+      color: #052e16;
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.15s;
+    }
+    .btn-approve:hover { background: #4ade80; }
+    .btn-reject {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    /* RIGHT TELEMETRY */
+    .telemetry-view {
+      background: #0d121f;
+      border-left: 1px solid var(--border);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+    .telemetry-view h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .metric-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .metric-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .metric-val {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: ui-monospace, monospace;
+    }
+    .metric-sparkline {
+      height: 32px;
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      margin-top: 6px;
+    }
+    .spark-bar {
+      flex: 1;
+      background: #2563eb;
+      border-radius: 2px 2px 0 0;
+      transition: height 0.3s;
+    }
+    .runbook-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 11px;
+    }
+    .postmortem-btn {
+      background: var(--switch-orange);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      margin-top: auto;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-group">
+      <div class="logo-badge">SWITCH WAR ROOM</div>
+      <div class="title-text">
+        <h1>IncidentPilot <span style="font-size: 12px; font-weight: normal; color: var(--text-muted);">&bull; WeMakeDevs Track 01</span></h1>
+        <p>Autonomous SRE Swarm &bull; DDD Architecture &bull; Cryptographic Approval Gate &bull; 5 Failure Modes</p>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <div class="fsm-badge" id="fsmBadge">
+        <div class="fsm-pulse"></div>
+        <span id="fsmStateText">STATE: DETECTED</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <!-- LEFT: SCENARIOS & AGENTS -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h3>Chaos Failure Mode</h3>
+        <button class="scenario-btn active" onclick="loadScenario('bad-deploy')">
+          <div class="scenario-name"><span>1. bad-deploy</span> <span style="color:var(--accent-red); font-size:10px;">P1</span></div>
+          <div class="scenario-desc">500 error spike & regression rollback</div>
+        </button>
+        <button class="scenario-btn" onclick="loadScenario('cache-down')">
+          <div class="scenario-name"><span>2. cache-down</span> <span style="color:var(--accent-amber); font-size:10px;">P2</span></div>
+          <div class="scenario-desc">Redis latency spike & circuit fallback</div>
+        </button>
+        <button class="scenario-btn" onclick="loadScenario('kill-worker')">
+          <div class="scenario-name"><span>3. kill-worker</span> <span style="color:var(--accent-blue); font-size:10px;">P3</span></div>
+          <div class="scenario-desc">Unresponsive worker daemon recovery</div>
+        </button>
+        <button class="scenario-btn" onclick="loadScenario('oom-worker')">
+          <div class="scenario-name"><span>4. oom-worker</span> <span style="color:var(--accent-red); font-size:10px;">P1</span></div>
+          <div class="scenario-desc">Cgroup memory leak & container restart</div>
+        </button>
+        <button class="scenario-btn" onclick="loadScenario('poison-message')">
+          <div class="scenario-name"><span>5. poison-message</span> <span style="color:var(--accent-amber); font-size:10px;">P2</span></div>
+          <div class="scenario-desc">Dead-letter queue isolation & skip</div>
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>Active Multi-Agent Swarm</h3>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background:#dc2626; color:white;">IC</div>
+          <div>
+            <div style="font-weight:600;">@incident-commander</div>
+            <div style="color:var(--text-dim); font-size:10px;">FSM & Phase Coordination</div>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background:#2563eb; color:white;">DI</div>
+          <div>
+            <div style="font-weight:600;">@diagnostic-investigator</div>
+            <div style="color:var(--text-dim); font-size:10px;">Hybrid RRF Runbook RAG</div>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background:#059669; color:white;">RE</div>
+          <div>
+            <div style="font-weight:600;">@repro-engineer</div>
+            <div style="color:var(--text-dim); font-size:10px;">Synthetic Sandbox Replay</div>
+          </div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-avatar" style="background:#7c3aed; color:white;">AC</div>
+          <div>
+            <div style="font-weight:600;">@adversarial-critic</div>
+            <div style="color:var(--text-dim); font-size:10px;">Blast Radius Verification</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER: WAR ROOM CHAT -->
+    <main class="chat-view">
+      <div class="chat-header">
+        <div><strong>Channel:</strong> #incident-war-room <span style="color:var(--text-dim)">&bull; Switch Mattermost/Slack bridge</span></div>
+        <div style="color:var(--text-dim)">TOCTOU Safe &bull; HMAC-SHA256 Signed</div>
+      </div>
+      <div class="chat-log" id="chatLog">
+        <!-- Messages loaded dynamically -->
+      </div>
+    </main>
+
+    <!-- RIGHT: LIVE METRICS & RUNBOOKS -->
+    <aside class="telemetry-view">
+      <div>
+        <h3>Live Prometheus Telemetry</h3>
+        <div class="metric-grid" style="margin-top:8px;">
+          <div class="metric-box">
+            <span class="metric-label">Error Rate</span>
+            <span class="metric-val" id="metricErrorRate" style="color:var(--accent-red);">48.7%</span>
+            <div class="metric-sparkline" id="sparkError"></div>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">p99 Latency</span>
+            <span class="metric-val" id="metricLatency" style="color:var(--accent-amber);">3,840ms</span>
+            <div class="metric-sparkline" id="sparkLatency"></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3>RRF Runbook Match</h3>
+        <div class="runbook-box" style="margin-top:8px;">
+          <div style="color:var(--switch-orange); font-weight:700;" id="runbookTitle">RB-001: Canary Bad Deploy</div>
+          <div style="color:var(--text-muted);" id="runbookSummary">Hybrid BM25 + Dense vector match (Score 0.94). Recommends immediate atomic rollback to commit v2.13.2.</div>
+        </div>
+      </div>
+
+      <div>
+        <h3>Judges Quick Verification</h3>
+        <div style="font-size:11px; background:#070a12; border:1px solid var(--border); padding:8px 10px; border-radius:6px; font-family:ui-monospace,monospace; color:var(--accent-blue);">
+          ./quickstart.sh --offline<br>
+          <span style="color:var(--text-dim)"># 27 tests passed in 0.27s</span>
+        </div>
+      </div>
+
+      <button class="postmortem-btn" onclick="exportPostmortem()">
+        Export Post-Mortem Report
+      </button>
+    </aside>
+  </div>
+
+  <script>
+    const scenarios = {
+      'bad-deploy': {
+        name: 'Bad Deployment 500 Spike',
+        errorRate: '48.7%',
+        latency: '3,840ms',
+        runbook: 'RB-001: Checkout Deploy Rollback',
+        runbookDesc: 'Matched via BM25+Dense RRF (score 0.94). Prescribes immediate atomic rollback to last verified stable image (v2.13.2).',
+        messages: [
+          {
+            author: '@incident-commander',
+            avatar: 'IC',
+            bg: '#dc2626',
+            role: 'Lead',
+            time: '00:01',
+            text: '🚨 <strong>P1 INCIDENT DETECTED:</strong> High error rate alert triggered on <code>orders_api:checkout</code>. Initializing war room. Handing diagnostic role lease to @diagnostic-investigator.'
+          },
+          {
+            author: '@diagnostic-investigator',
+            avatar: 'DI',
+            bg: '#2563eb',
+            role: 'Diagnostics',
+            time: '00:03',
+            text: '📊 Observability telemetry isolated culprit release <code>v2.14.0</code> (commit <code>8f3a91b</code>). Error: <code>NullPointerException: PaymentGateway.initClient()</code>. Querying Runbook RRF...'
+          },
+          {
+            author: '@repro-engineer',
+            avatar: 'RE',
+            bg: '#059669',
+            role: 'Reproduction',
+            time: '00:05',
+            text: '🧪 Replaying synthetic checkout traffic against sandbox replica: <strong>10/10 requests reproduced HTTP 500</strong>. Bug confirmed reproducible.'
+          },
+          {
+            author: '@adversarial-critic',
+            avatar: 'AC',
+            bg: '#7c3aed',
+            role: 'Critic',
+            time: '00:07',
+            text: '🛡️ <strong>Safety Review Passed:</strong> Blast radius strictly confined to <code>orders_api</code> container. Database schema v2.13.2 verified backward compatible. Formulating Action Digest.'
+          },
+          {
+            author: '@incident-commander',
+            avatar: 'IC',
+            bg: '#dc2626',
+            role: 'Gatekeeper',
+            time: '00:08',
+            isApproval: true,
+            digest: 'hmac-sha256:7b98f21da90e4f3a8b27c10d5e893bf4',
+            actionText: 'Execute atomic rollback of orders_api from v2.14.0 to v2.13.2'
+          }
+        ]
+      },
+      'cache-down': {
+        name: 'Redis Cache Outage',
+        errorRate: '18.2%',
+        latency: '5,210ms',
+        runbook: 'RB-003: Redis Outage Fallback',
+        runbookDesc: 'RRF match score 0.91. Prescribes tripping circuit breaker to in-memory local cache to stop cascading Postgres pool exhaustion.',
+        messages: [
+          {
+            author: '@incident-commander',
+            avatar: 'IC',
+            bg: '#dc2626',
+            role: 'Lead',
+            time: '00:01',
+            text: '⚠️ <strong>P2 INCIDENT DETECTED:</strong> Redis timeout spike (5000ms+). DB connection pool at 98% saturation.'
+          },
+          {
+            author: '@diagnostic-investigator',
+            avatar: 'DI',
+            bg: '#2563eb',
+            role: 'Diagnostics',
+            time: '00:04',
+            text: '🔍 Root cause: Redis primary replica partitioned. Runbook RB-003 advises enabling circuit breaker fallback mode.'
+          },
+          {
+            author: '@adversarial-critic',
+            avatar: 'AC',
+            bg: '#7c3aed',
+            role: 'Critic',
+            time: '00:06',
+            text: '🛡️ Fallback mode limits catalog refresh to 15s intervals. Safe for production read traffic.'
+          },
+          {
+            author: '@incident-commander',
+            avatar: 'IC',
+            bg: '#dc2626',
+            role: 'Gatekeeper',
+            time: '00:08',
+            isApproval: true,
+            digest: 'hmac-sha256:3a1b4c9e8d7f2a1b0c9e8d7f6a5b4c3d',
+            actionText: 'Trip Circuit Breaker to Local Memory Cache Fallback'
+          }
+        ]
+      },
+      'kill-worker': {
+        name: 'Unresponsive Worker Daemon',
+        errorRate: '0.0%',
+        latency: '420ms',
+        runbook: 'RB-007: Daemon Recovery',
+        runbookDesc: 'Queue backlog growing exponentially (14,200 pending jobs). Worker heartbeat lost.',
+        messages: [
+          {
+            author: '@incident-commander',
+            avatar: 'IC',
+            bg: '#dc2626',
+            role: 'Lead',
+            time: '00:01',
+            text: '⚠️ <strong>P3 ALERT:</strong> Background worker PID 1492 lost heartbeat for 120s. Processing backlog rising.'
+          },
+          {
+            author: '@repro-engineer',
+            avatar: 'RE',
+            bg: '#059669',
+            role: 'Reproduction',
+            time: '00:04',
+            text: 'Process probe verified PID 1492 in deadlocked futex state. Zero lock contention on database.'
+          },
+          {
+            author: '@incident-commander',
+            avatar: 'IC',
+            bg: '#dc2626',
+            role: 'Gatekeeper',
+            time: '00:07',
+            isApproval: true,
+            digest: 'hmac-sha256:5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b',
+            actionText: 'Graceful kill -15 PID 1492 and spawn clean replacement daemon'
+          }
+        ]
+      },
+      'oom-worker': {
+        name: 'OOM Killed Container',
+        errorRate: '35.4%',
+        latency: '2,900ms',
+        runbook: 'RB-009: Cgroup Memory Exhaustion',
+        runbookDesc: 'Kernel oom-killer terminated order exporter pod. Prescribes doubling cgroup memory reservation to 2GB.',
+        messages: [
+          {
+            author: '@incident-commander',
+            avatar: 'IC',
+            bg: '#dc2626',
+            role: 'Lead',
+            time: '00:01',
+            text: '🚨 <strong>P1 ALERT:</strong> Container <code>orders_worker</code> terminated with ExitCode 137 (OOMKilled).'
+          },
+          {
+            author: '@diagnostic-investigator',
+            avatar: 'DI',
+            bg: '#2563eb',
+            role: 'Diagnostics',
+            time: '00:03',
+            text: 'Analysis shows batch export of 50k rows exceeded 512MB limit. Memory limit patch required.'
+          },
+          {
+            author: '@incident-commander',
+            avatar: 'IC',
+            bg: '#dc2626',
+            role: 'Gatekeeper',
+            time: '00:06',
+            isApproval: true,
+            digest: 'hmac-sha256:9f8e7d6c5b4a3a2b1c0d9e8f7a6b5c4d',
+            actionText: 'Scale memory limit to 2048Mi and restart pod with stream batching'
+          }
+        ]
+      },
+      'poison-message': {
+        name: 'Poison Pill Message Loop',
+        errorRate: '22.0%',
+        latency: '1,450ms',
+        runbook: 'RB-012: DLQ Message Quarantine',
+        runbookDesc: 'Corrupted payload crashing consumer continuously. Prescribes dead-letter routing.',
+        messages: [
+          {
+            author: '@incident-commander',
+            avatar: 'IC',
+            bg: '#dc2626',
+            role: 'Lead',
+            time: '00:01',
+            text: '⚠️ <strong>P2 ALERT:</strong> Message ID <code>msg_9941a</code> causing consumer crash loop (7 redeliveries).'
+          },
+          {
+            author: '@repro-engineer',
+            avatar: 'RE',
+            bg: '#059669',
+            role: 'Reproduction',
+            time: '00:04',
+            text: 'Sandbox parser confirms malformed UTF-16 character in JSON payload. Crashes pydantic model.'
+          },
+          {
+            author: '@incident-commander',
+            avatar: 'IC',
+            bg: '#dc2626',
+            role: 'Gatekeeper',
+            time: '00:06',
+            isApproval: true,
+            digest: 'hmac-sha256:1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d',
+            actionText: 'Route msg_9941a to Dead-Letter Queue (DLQ) and unblock stream'
+          }
+        ]
+      }
+    };
+
+    let currentScenario = 'bad-deploy';
+
+    function renderSparklines() {
+      const errSpark = document.getElementById('sparkError');
+      const latSpark = document.getElementById('sparkLatency');
+      errSpark.innerHTML = '';
+      latSpark.innerHTML = '';
+      const heights = [20, 35, 45, 60, 85, 95, 100, 90, 85, 95];
+      heights.forEach(h => {
+        const bar1 = document.createElement('div');
+        bar1.className = 'spark-bar';
+        bar1.style.height = `${h}%`;
+        bar1.style.background = '#ef4444';
+        errSpark.appendChild(bar1);
+
+        const bar2 = document.createElement('div');
+        bar2.className = 'spark-bar';
+        bar2.style.height = `${h * 0.8}%`;
+        bar2.style.background = '#f59e0b';
+        latSpark.appendChild(bar2);
+      });
+    }
+
+    function loadScenario(key) {
+      currentScenario = key;
+      document.querySelectorAll('.scenario-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const sc = scenarios[key];
+      document.getElementById('metricErrorRate').innerText = sc.errorRate;
+      document.getElementById('metricLatency').innerText = sc.latency;
+      document.getElementById('runbookTitle').innerText = sc.runbook;
+      document.getElementById('runbookSummary').innerText = sc.runbookDesc;
+      document.getElementById('fsmStateText').innerText = 'STATE: AWAITING_APPROVAL';
+
+      const log = document.getElementById('chatLog');
+      log.innerHTML = '';
+
+      sc.messages.forEach((msg, idx) => {
+        setTimeout(() => {
+          const div = document.createElement('div');
+          div.className = 'message';
+          div.innerHTML = `
+            <div class="msg-avatar" style="background:${msg.bg}; color:white;">${msg.avatar}</div>
+            <div class="msg-body">
+              <div class="msg-meta">
+                <span class="msg-author">${msg.author}</span>
+                <span class="msg-role-tag">${msg.role}</span>
+                <span class="msg-time">${msg.time}</span>
+              </div>
+              <div>${msg.text || ''}</div>
+              ${msg.isApproval ? `
+                <div class="approval-card">
+                  <div class="approval-header">
+                    <span>⚠️ HUMAN APPROVAL REQUIRED</span>
+                    <span>TOCTOU Protected</span>
+                  </div>
+                  <div style="font-size:12px; font-weight:600;">Proposed Action: ${msg.actionText}</div>
+                  <div class="approval-digest">Action Digest: ${msg.digest}</div>
+                  <div class="approval-actions" id="approvalActions">
+                    <button class="btn-approve" onclick="approveMitigation('${msg.digest}')">✅ Approve Mitigation</button>
+                    <button class="btn-reject" onclick="rejectMitigation()">Reject</button>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          `;
+          log.appendChild(div);
+          log.scrollTop = log.scrollHeight;
+        }, idx * 100);
+      });
+      renderSparklines();
+    }
+
+    function approveMitigation(digest) {
+      const actions = document.getElementById('approvalActions');
+      if (actions) {
+        actions.innerHTML = '<span style="color:var(--accent-green); font-weight:700; font-size:12px;">✅ Cryptographically Authorized by On-Call Engineer</span>';
+      }
+      document.getElementById('fsmStateText').innerText = 'STATE: RESOLVED';
+      document.getElementById('metricErrorRate').innerText = '0.0%';
+      document.getElementById('metricErrorRate').style.color = '#22c55e';
+      document.getElementById('metricLatency').innerText = '24.5ms';
+      document.getElementById('metricLatency').style.color = '#22c55e';
+
+      const log = document.getElementById('chatLog');
+      const div = document.createElement('div');
+      div.className = 'message';
+      div.innerHTML = `
+        <div class="msg-avatar" style="background:#22c55e; color:#052e16;">OK</div>
+        <div class="msg-body">
+          <div class="msg-meta">
+            <span class="msg-author">@incident-commander</span>
+            <span class="msg-role-tag">EXECUTION</span>
+            <span class="msg-time">00:10</span>
+          </div>
+          <div>
+            🎉 <strong>Action Verified & Executed!</strong><br>
+            • Traffic Shifted: 100% to verified target.<br>
+            • Canary Verification: 10/10 probes passed (HTTP 200).<br>
+            • Post-Mortem compiled and committed to <code>evals/scorecard.md</code>.<br>
+            • War Room archived. MTTR: 1m 42s.
+          </div>
+        </div>
+      `;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function rejectMitigation() {
+      alert("Mitigation rejected by on-call engineer. Circuit breaker engaged.");
+    }
+
+    function exportPostmortem() {
+      const markdown = `# Post-Mortem Report: IncidentPilot
+Date: 2026-11-05
+Scenario: ${currentScenario}
+Platform: Switch Mattermost / Slack Bridge
+MTTR: 1m 42s
+Status: RESOLVED
+
+## Timeline
+- 00:01: Alert detected by Prometheus collector
+- 00:03: Hybrid BM25+Dense RRF identified runbook
+- 00:05: Reproduction engineer confirmed failure in isolated sandbox
+- 00:07: Adversarial critic verified blast radius
+- 00:08: Cryptographic approval signed by human on-call
+- 00:10: Canary health verified 100% healthy
+`;
+      const blob = new Blob([markdown], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `postmortem-${currentScenario}.md`;
+      a.click();
+    }
+
+    // Initial load
+    loadScenario('bad-deploy');
+  </script>
+</body>
+</html>

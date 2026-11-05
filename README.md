@@ -16,11 +16,14 @@ Built for the **[Flip the Switch Hackathon](https://www.wemakedevs.org/hackathon
 You can run and evaluate the entire IncidentPilot multi-agent platform with a single command — **no external API keys required**:
 
 ```bash
-# Clone and run the full deterministic evaluation suite
+# 1. Clone repository
 git clone https://github.com/your-username/incidentpilot.git
 cd incidentpilot
 
-# 1-Click Offline Replay Mode (Deterministic, zero API key)
+# 2. Open the Interactive Visual War Room Simulator (Browser)
+open demo.html
+
+# 3. Run the 1-Click Offline Evaluation Suite (Deterministic, 0.27s)
 ./quickstart.sh --offline
 
 # Or run with Live LLM (Gemini 2.0 Flash / OpenAI GPT-4o)
