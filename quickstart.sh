@@ -44,3 +44,4 @@ echo "=========================================================="
 echo " ✅ IncidentPilot Verification Complete!"
 echo " Results saved to evals/scorecard.md"
 echo "=========================================================="
+

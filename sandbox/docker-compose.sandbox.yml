@@ -53,3 +53,4 @@ services:
       - --storage.tsdb.retention.time=2h
     ports:
       - "9090:9090"
+

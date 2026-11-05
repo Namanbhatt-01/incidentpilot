@@ -145,3 +145,4 @@ incidentpilot/
 - **Switch Infrastructure** - Official hackathon wire protocol and template schema.
 - See full legal attribution in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 - IncidentPilot is licensed under the [Apache-2.0 License](LICENSE).
+

@@ -39,3 +39,4 @@ typecheck:
 
 clean:
 	rm -rf __pycache__ .pytest_cache .mypy_cache .ruff_cache htmlcov .coverage
+

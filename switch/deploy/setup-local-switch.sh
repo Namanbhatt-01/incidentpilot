@@ -34,3 +34,4 @@ echo "  - Switch Core API:  http://localhost:8000"
 echo "  - Mattermost Chat:  http://localhost:8065"
 echo ""
 echo "Ready for IncidentPilot agents to connect."
+

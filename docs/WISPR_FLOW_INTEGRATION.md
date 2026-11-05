@@ -28,3 +28,4 @@ To submit for the **Code with Wispr ($500 cash)** side track:
 2. Navigate to **Insights** tab.
 3. Take a screenshot showing your words spoken and time saved during the hackathon.
 4. Attach `wispr-scorecard.png` alongside your final project submission.
+
