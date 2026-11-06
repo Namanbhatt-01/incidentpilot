@@ -742,6 +742,11 @@
       const log = document.getElementById('chatLog');
       log.innerHTML = '';
 
+      // Sync with live backend if running on HTTP
+      if (window.location.protocol.startsWith('http')) {
+        fetch('/api/chaos/inject/' + key, { method: 'POST' }).catch(() => {});
+      }
+
       sc.messages.forEach((msg, idx) => {
         setTimeout(() => {
           const div = document.createElement('div');
@@ -779,6 +784,9 @@
     }
 
     function approveMitigation(digest) {
+      if (window.location.protocol.startsWith('http')) {
+        fetch('/api/chaos/reset', { method: 'POST' }).catch(() => {});
+      }
       const actions = document.getElementById('approvalActions');
       if (actions) {
         actions.innerHTML = '<span style="color:var(--accent-green); font-weight:700; font-size:12px;">✅ Cryptographically Authorized by On-Call Engineer</span>';

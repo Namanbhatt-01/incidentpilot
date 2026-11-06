@@ -11,7 +11,7 @@ Built for the **[Flip the Switch Hackathon](https://www.wemakedevs.org/hackathon
 
 ---
 
-## ⚡ 60-Second Quickstart (Judge Evaluation)
+## ⚡ 60-Second Quickstart & Live Demo Ports
 
 You can run and evaluate the entire IncidentPilot multi-agent platform with a single command — **no external API keys required**:
 
@@ -20,16 +20,26 @@ You can run and evaluate the entire IncidentPilot multi-agent platform with a si
 git clone https://github.com/your-username/incidentpilot.git
 cd incidentpilot
 
-# 2. Open the Interactive Visual War Room Simulator (Browser)
-open demo.html
+# 2. Option A: Launch Live Target Service & Interactive War Room (Port 8000)
+./scripts/start_demo.sh
+# -> Automatically opens http://127.0.0.1:8000 (UI, Swagger, Prometheus metrics)
 
-# 3. Run the 1-Click Offline Evaluation Suite (Deterministic, 0.27s)
+# 3. Option B: Interactive Terminal Simulation for Video Recording
+make sim          # Live terminal war room with interactive human approval
+make sim-auto     # Automated replay for continuous video recording
+
+# 4. Option C: 1-Click Offline Evaluation Suite (Deterministic, 0.27s)
 ./quickstart.sh --offline
-
-# Or run with Live LLM (Gemini 2.0 Flash / OpenAI GPT-4o)
-export GEMINI_API_KEY="your-key-here"
-./quickstart.sh --live
 ```
+
+### 🌐 Live Ports & Endpoints
+| Port / Endpoint | Description |
+| :--- | :--- |
+| **`http://127.0.0.1:8000/`** | **Interactive Switch War Room Dashboard** (Dynamic live simulation) |
+| **`http://127.0.0.1:8000/docs`** | **FastAPI Swagger API Documentation** (Live OpenAPI schemas) |
+| **`http://127.0.0.1:8000/metrics`** | **Live Prometheus Metrics Exporter** (Error rate, latency, chaos state) |
+| **`http://127.0.0.1:8000/health`** | **Microservice Health Probe** (`200 OK` vs `degraded`) |
+| **`POST http://127.0.0.1:8000/orders`** | **Transactional Order Pipeline** (Spikes to 500 during regression) |
 
 ---
 

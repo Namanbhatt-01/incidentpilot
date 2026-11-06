@@ -7,15 +7,26 @@ RUFF := $(VENV)/bin/ruff
 MYPY := $(VENV)/bin/mypy
 
 help:
-	@echo "IncidentPilot Developer Targets:"
+	@echo "IncidentPilot Developer & Judge Targets:"
+	@echo "  make demo           - Launch live target service & browser War Room on port 8000"
+	@echo "  make sim            - Run interactive terminal War Room simulation for video"
+	@echo "  make sim-auto       - Run automated terminal simulation (no prompt)"
 	@echo "  make setup          - Initialize virtual environment & install dependencies"
 	@echo "  make test           - Run all unit and integration tests"
 	@echo "  make test-unit      - Run unit tests only"
 	@echo "  make lint           - Run Ruff linter"
 	@echo "  make format         - Run Ruff code formatter"
 	@echo "  make typecheck      - Run Mypy strict type checking"
-	@echo "  make chaos-500      - Inject HTTP 500 regression in sandbox"
 	@echo "  make clean          - Remove temporary and build files"
+
+demo:
+	./scripts/start_demo.sh
+
+sim:
+	$(PYTHON) scripts/demo_simulation.py
+
+sim-auto:
+	$(PYTHON) scripts/demo_simulation.py --auto-approve
 
 setup:
 	python3 -m venv $(VENV)
