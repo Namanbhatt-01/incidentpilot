@@ -65,3 +65,4 @@ fi
 
 # Keep running
 wait "${SERVER_PID}"
+

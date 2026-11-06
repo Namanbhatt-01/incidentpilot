@@ -16,11 +16,12 @@ from __future__ import annotations
 import glob
 import time
 from pathlib import Path
+
 import httpx
 
+from packages.domain.digest import ActionDigest
 from packages.domain.entities import IncidentAggregate, SeverityLevel
 from packages.domain.events import IncidentState
-from packages.domain.digest import ActionDigest
 from packages.infrastructure.knowledge.retriever import HybridRunbookRetriever
 
 BASE_URL = "http://127.0.0.1:8000"
@@ -48,7 +49,7 @@ def main() -> None:
         client.post("/api/chaos/reset")
         health = client.get("/health").json()
         print(f"[{C_GREEN}✓ STEP 1{C_RESET}] Connected to live service: {health['service']} (version {health['version']}, status={health['status']})")
-    except Exception as e:
+    except Exception:
         print(f"{C_RED}❌ Error: Live server not running on {BASE_URL}. Run './scripts/start_demo.sh' or 'make demo' first.{C_RESET}")
         return
 
@@ -96,7 +97,7 @@ def main() -> None:
     top_match = matches[0] if matches else None
     assert top_match is not None
     print(f"   -> Top Ranked Runbook: {C_CYAN}{top_match.runbook_id}{C_RESET} (Relevance Score: {top_match.score:.2f})")
-    print(f"   -> Prescribed Action: Atomic rollback to last known stable commit")
+    print("   -> Prescribed Action: Atomic rollback to last known stable commit")
 
     # 8. Cryptographic Action Digest
     incident.fsm.transition_to(IncidentState.REPRODUCING)
