@@ -9,6 +9,7 @@ MYPY := $(VENV)/bin/mypy
 help:
 	@echo "IncidentPilot Developer & Judge Targets:"
 	@echo "  make demo           - Launch live target service & browser War Room on port 8000"
+	@echo "  make drill          - Run real end-to-end live HTTP SRE incident drill against port 8000"
 	@echo "  make sim            - Run interactive terminal War Room simulation for video"
 	@echo "  make sim-auto       - Run automated terminal simulation (no prompt)"
 	@echo "  make setup          - Initialize virtual environment & install dependencies"
@@ -21,6 +22,9 @@ help:
 
 demo:
 	./scripts/start_demo.sh
+
+drill:
+	$(PYTHON) scripts/live_incident_drill.py
 
 sim:
 	$(PYTHON) scripts/demo_simulation.py
