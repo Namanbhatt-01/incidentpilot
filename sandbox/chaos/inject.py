@@ -75,7 +75,10 @@ SCENARIOS: dict[str, Scenario] = {
 def get_state() -> dict[str, str]:
     if STATE_FILE.exists():
         try:
-            return json.loads(STATE_FILE.read_text())
+            data = json.loads(STATE_FILE.read_text())
+            if isinstance(data, dict):
+                return {str(k): str(v) for k, v in data.items()}
+            return {"active_scenario": "none"}
         except Exception:
             return {"active_scenario": "none"}
     return {"active_scenario": "none"}

@@ -39,9 +39,15 @@ C_CYAN = "\033[96m"
 
 
 def main() -> None:
-    print(f"\n{C_BOLD}{C_CYAN}========================================================================{C_RESET}")
-    print(f"{C_BOLD}{C_CYAN}      RUNNING LIVE END-TO-END SRE INCIDENT DRILL ON {BASE_URL}{C_RESET}")
-    print(f"{C_BOLD}{C_CYAN}========================================================================{C_RESET}\n")
+    print(
+        f"\n{C_BOLD}{C_CYAN}========================================================================{C_RESET}"
+    )
+    print(
+        f"{C_BOLD}{C_CYAN}      RUNNING LIVE END-TO-END SRE INCIDENT DRILL ON {BASE_URL}{C_RESET}"
+    )
+    print(
+        f"{C_BOLD}{C_CYAN}========================================================================{C_RESET}\n"
+    )
 
     client = httpx.Client(base_url=BASE_URL, timeout=5.0)
 
@@ -49,33 +55,47 @@ def main() -> None:
     try:
         client.post("/api/chaos/reset")
         health = client.get("/health").json()
-        print(f"[{C_GREEN}STEP 1{C_RESET}] Connected to live service: {health['service']} (version {health['version']}, status={health['status']})")
+        print(
+            f"[{C_GREEN}STEP 1{C_RESET}] Connected to live service: {health['service']} (version {health['version']}, status={health['status']})"
+        )
     except Exception:
-        print(f"{C_RED}[ERROR] Live server not running on {BASE_URL}. Run './scripts/start_demo.sh' or 'make demo' first.{C_RESET}")
+        print(
+            f"{C_RED}[ERROR] Live server not running on {BASE_URL}. Run './scripts/start_demo.sh' or 'make demo' first.{C_RESET}"
+        )
         return
 
     # 2. Index real runbooks from disk
     retriever = HybridRunbookRetriever()
     runbook_files = glob.glob(str(RUNBOOKS_DIR / "*.md"))
-    print(f"[{C_GREEN}STEP 2{C_RESET}] Indexing {len(runbook_files)} Markdown runbooks from {RUNBOOKS_DIR.name}/...")
+    print(
+        f"[{C_GREEN}STEP 2{C_RESET}] Indexing {len(runbook_files)} Markdown runbooks from {RUNBOOKS_DIR.name}/..."
+    )
     for fpath in runbook_files:
         p = Path(fpath)
         content = p.read_text()
         retriever.add_runbook(runbook_id=p.name, title=p.stem, content=content)
 
     # 3. Baseline traffic test
-    order_res = client.post("/orders", json={"item_id": "laptop-pro-16", "quantity": 1, "customer_id": "cust-901"})
+    order_res = client.post(
+        "/orders", json={"item_id": "laptop-pro-16", "quantity": 1, "customer_id": "cust-901"}
+    )
     assert order_res.status_code == 200, f"Expected 200, got {order_res.status_code}"
-    print(f"[{C_GREEN}STEP 3{C_RESET}] Baseline traffic probe: HTTP 200 OK (order_id: {order_res.json()['order_id']}, status: {order_res.json()['status']})")
+    print(
+        f"[{C_GREEN}STEP 3{C_RESET}] Baseline traffic probe: HTTP 200 OK (order_id: {order_res.json()['order_id']}, status: {order_res.json()['status']})"
+    )
 
     # 4. Inject real chaos failure
-    print(f"\n[{C_YELLOW}STEP 4{C_RESET}] Injecting chaos failure: POST /api/chaos/inject/bad-deploy...")
+    print(
+        f"\n[{C_YELLOW}STEP 4{C_RESET}] Injecting chaos failure: POST /api/chaos/inject/bad-deploy..."
+    )
     inject_res = client.post("/api/chaos/inject/bad-deploy")
     assert inject_res.status_code == 200
 
     # 5. Live traffic failure detection
     print(f"[{C_RED}STEP 5{C_RESET}] Sending transactional request to /orders during failure...")
-    fail_res = client.post("/orders", json={"item_id": "laptop-pro-16", "quantity": 1, "customer_id": "cust-901"})
+    fail_res = client.post(
+        "/orders", json={"item_id": "laptop-pro-16", "quantity": 1, "customer_id": "cust-901"}
+    )
     print(f"   -> Real HTTP Status: {C_RED}{fail_res.status_code} Internal Server Error{C_RESET}")
     error_detail = fail_res.json().get("detail", fail_res.text)
     print(f"   -> Real Server Stack Trace: {C_YELLOW}{error_detail}{C_RESET}")
@@ -97,13 +117,17 @@ def main() -> None:
     matches = retriever.search(error_detail, top_k=2)
     top_match = matches[0] if matches else None
     assert top_match is not None
-    print(f"   -> Top Ranked Runbook: {C_CYAN}{top_match.runbook_id}{C_RESET} (Relevance Score: {top_match.score:.2f})")
+    print(
+        f"   -> Top Ranked Runbook: {C_CYAN}{top_match.runbook_id}{C_RESET} (Relevance Score: {top_match.score:.2f})"
+    )
     print("   -> Prescribed Action: Atomic rollback to last known stable commit")
 
     # Live Google Gemini AI Reasoning
     gemini = GeminiLiveClient()
     if gemini.is_available:
-        print(f"\n   [{C_CYAN}LIVE GEMINI INFERENCE ({gemini.model}){C_RESET}] Sending error trace to Gemini API...")
+        print(
+            f"\n   [{C_CYAN}LIVE GEMINI INFERENCE ({gemini.model}){C_RESET}] Sending error trace to Gemini API..."
+        )
         diag = gemini.diagnose_incident(error_trace=error_detail, runbook_context=top_match.snippet)
         if diag:
             print(f"   -> Gemini Root Cause:   {C_YELLOW}{diag.root_cause}{C_RESET}")
@@ -123,12 +147,16 @@ def main() -> None:
         timestamp=time.time(),
     )
     digest = digest_obj.compute_sha256()
-    print(f"[{C_GREEN}STEP 8{C_RESET}] Generated Cryptographic Action Digest: {C_CYAN}sha256:{digest}{C_RESET}")
+    print(
+        f"[{C_GREEN}STEP 8{C_RESET}] Generated Cryptographic Action Digest: {C_CYAN}sha256:{digest}{C_RESET}"
+    )
     print(f"   -> Short Fingerprint: {digest_obj.short_hash()}")
     print(f"   -> Human Approval Gate: State = {incident.state.value}")
 
     # 9. Execute Real Remediation
-    print(f"\n[{C_GREEN}STEP 9{C_RESET}] Human Approved. Executing mitigation: POST /api/chaos/reset...")
+    print(
+        f"\n[{C_GREEN}STEP 9{C_RESET}] Human Approved. Executing mitigation: POST /api/chaos/reset..."
+    )
     incident.fsm.transition_to(IncidentState.REMEDIATING)
     reset_res = client.post("/api/chaos/reset")
     assert reset_res.status_code == 200
@@ -138,12 +166,16 @@ def main() -> None:
     print(f"[{C_GREEN}STEP 10{C_RESET}] Dispatching 10 live synthetic probes against /orders...")
     success_count = 0
     for i in range(10):
-        probe = client.post("/orders", json={"item_id": f"item-{i}", "quantity": 1, "customer_id": f"cust-{i}"})
+        probe = client.post(
+            "/orders", json={"item_id": f"item-{i}", "quantity": 1, "customer_id": f"cust-{i}"}
+        )
         if probe.status_code == 200:
             success_count += 1
         time.sleep(0.05)
 
-    print(f"   -> Canary Probe Results: {C_GREEN}{success_count}/10 HTTP 200 OK Probes Passed{C_RESET} (100% Recovery)")
+    print(
+        f"   -> Canary Probe Results: {C_GREEN}{success_count}/10 HTTP 200 OK Probes Passed{C_RESET} (100% Recovery)"
+    )
     incident.fsm.transition_to(IncidentState.RESOLVED)
     print(f"   -> Domain FSM State: {C_GREEN}{incident.state.value}{C_RESET}")
 
@@ -154,9 +186,15 @@ def main() -> None:
         if not line.startswith("#"):
             print(f"   {line}")
 
-    print(f"\n{C_BOLD}{C_GREEN}========================================================================{C_RESET}")
-    print(f"{C_BOLD}{C_GREEN}  [OK] LIVE END-TO-END SRE INCIDENT DRILL COMPLETED SUCCESSFULLY{C_RESET}")
-    print(f"{C_BOLD}{C_GREEN}========================================================================{C_RESET}\n")
+    print(
+        f"\n{C_BOLD}{C_GREEN}========================================================================{C_RESET}"
+    )
+    print(
+        f"{C_BOLD}{C_GREEN}  [OK] LIVE END-TO-END SRE INCIDENT DRILL COMPLETED SUCCESSFULLY{C_RESET}"
+    )
+    print(
+        f"{C_BOLD}{C_GREEN}========================================================================{C_RESET}\n"
+    )
 
 
 if __name__ == "__main__":

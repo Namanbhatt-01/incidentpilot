@@ -49,12 +49,12 @@ def get_current_fail_mode() -> str:
     if STATE_FILE.exists():
         try:
             data = json.loads(STATE_FILE.read_text())
-            active = data.get("active_scenario", "none")
+            active = str(data.get("active_scenario", "none"))
             if active not in ALLOWED_SCENARIOS:
                 return "none"
             if active == "bad-deploy":
                 return "http500"
-            return active
+            return str(active)
         except Exception:
             return "none"
     return "none"

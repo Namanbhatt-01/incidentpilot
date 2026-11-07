@@ -92,7 +92,9 @@ def run_simulation(auto_approve: bool = False) -> None:
     time.sleep(1.5)
 
     # 3. Diagnostic Investigator
-    print(f"\n{C_BLUE}{C_BOLD}[@diagnostic-investigator]{C_RESET} {C_DIM}(Role Lease: Diagnostics){C_RESET}")
+    print(
+        f"\n{C_BLUE}{C_BOLD}[@diagnostic-investigator]{C_RESET} {C_DIM}(Role Lease: Diagnostics){C_RESET}"
+    )
     type_print(
         "[DIAGNOSIS] Correlating telemetry and deployment metadata... Culprit commit: 8f3a91b (v2.14.0).\n"
         "   Exception isolated: TypeError: 'NoneType' object is not subscriptable in price calculation.\n"
@@ -103,7 +105,9 @@ def run_simulation(auto_approve: bool = False) -> None:
     time.sleep(1.8)
 
     # 4. Reproduction Engineer
-    print(f"\n{C_GREEN}{C_BOLD}[@repro-engineer]{C_RESET} {C_DIM}(Role Lease: Reproduction){C_RESET}")
+    print(
+        f"\n{C_GREEN}{C_BOLD}[@repro-engineer]{C_RESET} {C_DIM}(Role Lease: Reproduction){C_RESET}"
+    )
     type_print(
         "[REPRODUCTION] Replaying 10 synthetic transactional orders against sandbox container replica...\n"
         "   10/10 probes resulted in HTTP 500 Internal Server Error. Bug definitively reproduced in sandbox.\n"
@@ -113,7 +117,9 @@ def run_simulation(auto_approve: bool = False) -> None:
     time.sleep(1.5)
 
     # 5. Adversarial Critic
-    print(f"\n{C_MAGENTA}{C_BOLD}[@adversarial-critic]{C_RESET} {C_DIM}(Role Lease: Safety & Blast Radius){C_RESET}")
+    print(
+        f"\n{C_MAGENTA}{C_BOLD}[@adversarial-critic]{C_RESET} {C_DIM}(Role Lease: Safety & Blast Radius){C_RESET}"
+    )
     type_print(
         "[SAFETY CRITIC] Blast radius analysis: Confined strictly to orders-api container.\n"
         "   Verifying schema compatibility: v2.13.2 schema matches production database.\n"
@@ -152,7 +158,9 @@ def run_simulation(auto_approve: bool = False) -> None:
 
     # 7. Operator Execution
     time.sleep(1.0)
-    print(f"\n{C_CYAN}{C_BOLD}[@incident-commander]{C_RESET} {C_DIM}(Role Lease: Execution & Verification){C_RESET}")
+    print(
+        f"\n{C_CYAN}{C_BOLD}[@incident-commander]{C_RESET} {C_DIM}(Role Lease: Execution & Verification){C_RESET}"
+    )
     type_print(
         "[EXECUTION] Executing verified rollback: orders-api -> v2.13.2...\n"
         "   Shifting 100% of production traffic to stable revision.\n"
@@ -177,6 +185,8 @@ def run_simulation(auto_approve: bool = False) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--auto-approve", action="store_true", help="Auto approve without interactive prompt")
+    parser.add_argument(
+        "--auto-approve", action="store_true", help="Auto approve without interactive prompt"
+    )
     args = parser.parse_args()
     run_simulation(auto_approve=args.auto_approve)

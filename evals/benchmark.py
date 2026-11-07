@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
+from typing import TypedDict
 
 from rich.console import Console
 from rich.table import Table
@@ -13,7 +14,16 @@ from packages.application.orchestrator import IncidentLifecycleManager
 
 console = Console()
 
-SCENARIO_INPUTS = [
+
+class ScenarioInput(TypedDict):
+    id: str
+    target: str
+    report: str
+    logs: list[str]
+    baseline_seconds: float
+
+
+SCENARIO_INPUTS: list[ScenarioInput] = [
     {
         "id": "bad-deploy",
         "target": "orders-api",
