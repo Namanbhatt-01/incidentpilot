@@ -36,13 +36,17 @@ class GeminiLiveClient:
     def is_available(self) -> bool:
         return bool(self.api_key and len(self.api_key) > 10)
 
-    def diagnose_incident(self, error_trace: str, runbook_context: str = "") -> GeminiDiagnosis | None:
+    def diagnose_incident(
+        self, error_trace: str, runbook_context: str = ""
+    ) -> GeminiDiagnosis | None:
         """Call Gemini to diagnose root cause and recommend actions from raw error logs."""
         if not self.is_available or not self.api_key:
             return None
 
         # Pass API key via secure header rather than query string
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
+        )
 
         prompt = f"""You are @diagnostic-investigator, an autonomous SRE agent in a production incident war room.
 Analyze this live service error trace:
@@ -89,4 +93,3 @@ Return a strictly valid JSON object with the following fields:
                 )
         except Exception:
             return None
-

@@ -62,4 +62,3 @@ class HybridRunbookRetriever:
 
         results.sort(key=lambda x: x.score, reverse=True)
         return results[:top_k]
-

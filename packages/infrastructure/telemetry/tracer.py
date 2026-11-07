@@ -40,4 +40,3 @@ class IncidentTracer:
         )
         self.spans.append(span)
         return span
-

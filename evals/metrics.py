@@ -23,4 +23,3 @@ def calculate_mttr_reduction(baseline: float, autonomous: float) -> float:
     if baseline <= 0:
         return 0.0
     return ((baseline - autonomous) / baseline) * 100.0
-

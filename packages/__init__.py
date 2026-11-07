@@ -1,2 +1,1 @@
 """IncidentPilot packages root namespace."""
-

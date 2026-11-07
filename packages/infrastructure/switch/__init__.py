@@ -1,2 +1,1 @@
 """Switch Agent Protocol integration."""
-

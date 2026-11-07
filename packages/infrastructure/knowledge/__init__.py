@@ -1,2 +1,1 @@
 """Knowledge & RAG subsystem."""
-
