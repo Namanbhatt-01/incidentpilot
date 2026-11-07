@@ -1,19 +1,19 @@
-# IncidentPilot 🚨
-> **Autonomous, Human-Supervised AI SRE Incident Response Squad Built Natively on Switch.**
+# IncidentPilot
+> **Autonomous, Human-Supervised AI SRE Incident Response Platform Built Natively on Switch.**
 
 [![CI Pipeline](https://github.com/sandbox-quantum/switch/actions/workflows/ci.yml/badge.svg)](https://github.com)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 [![Switch Protocol](https://img.shields.io/badge/Switch-Agent%20Protocol%20v1-orange.svg)](https://docs.switchagents.ai)
-[![TDD Coverage](https://img.shields.io/badge/Tests-27%20Passed%20(100%25)-brightgreen.svg)]()
+[![TDD Coverage](https://img.shields.io/badge/Tests-26%20Passed%20(100%25)-brightgreen.svg)](https://github.com/Namanbhatt-01/incidentpilot)
 
 Built for the **[Flip the Switch Hackathon](https://www.wemakedevs.org/hackathons/switch)** (Powered by **WeMakeDevs** & **DevTools Academy**).
 
 ---
 
-## ⚡ 60-Second Quickstart & Live Demo Ports
+## Quickstart and Live Service Ports
 
-You can run and evaluate the entire IncidentPilot multi-agent platform with a single command — **no external API keys required**:
+You can execute and evaluate the complete IncidentPilot platform locally with a single command — **no external API keys required**:
 
 ```bash
 # 1. Clone repository
@@ -28,35 +28,38 @@ cd incidentpilot
 make sim          # Live terminal war room with interactive human approval
 make sim-auto     # Automated replay for continuous video recording
 
-# 4. Option C: 1-Click Offline Evaluation Suite (Deterministic, 0.27s)
+# 4. Option C: Real End-to-End Live HTTP SRE Drill with Google Gemini
+make drill        # Sends real HTTP requests, induces chaos, and verifies recovery
+
+# 5. Option D: Deterministic Offline Evaluation Suite (0.27s)
 ./quickstart.sh --offline
 ```
 
-### 🌐 Live Ports & Endpoints
-| Port / Endpoint | Description |
-| :--- | :--- |
-| **`http://127.0.0.1:8000/`** | **Interactive Switch War Room Dashboard** (Dynamic live simulation) |
-| **`http://127.0.0.1:8000/docs`** | **FastAPI Swagger API Documentation** (Live OpenAPI schemas) |
-| **`http://127.0.0.1:8000/metrics`** | **Live Prometheus Metrics Exporter** (Error rate, latency, chaos state) |
-| **`http://127.0.0.1:8000/health`** | **Microservice Health Probe** (`200 OK` vs `degraded`) |
-| **`POST http://127.0.0.1:8000/orders`** | **Transactional Order Pipeline** (Spikes to 500 during regression) |
+### Live Service Ports and Endpoints
+| Port / Endpoint | Protocol | Description |
+| :--- | :--- | :--- |
+| **`http://127.0.0.1:8000/`** | HTTP | **Interactive Switch War Room Dashboard** (Live state synchronization) |
+| **`http://127.0.0.1:8000/docs`** | HTTP | **FastAPI Swagger API Documentation** (OpenAPI v3 schemas) |
+| **`http://127.0.0.1:8000/metrics`** | HTTP | **Prometheus Metrics Exporter** (Error rate, latency, chaos state) |
+| **`http://127.0.0.1:8000/health`** | HTTP | **Microservice Health Probe** (`200 OK` vs `degraded`) |
+| **`POST http://127.0.0.1:8000/orders`** | HTTP | **Transactional Order Pipeline** (Spikes to 500 during regression) |
 
 ---
 
-## 🎯 The Problem & Challenge Alignment
+## Problem Statement and Architectural Alignment
 
-Solo AI coding agents (Claude Code, Codex, OpenCode, Antigravity) are fantastic at writing functions. But during a high-severity production outage, **solo agents fall short**:
-- They operate in an isolated terminal without team visibility.
-- They hallucinate root causes from superficial log correlation.
-- They risk breaking downstream services if given autonomous write access.
+Solo AI coding agents (Claude Code, Codex, OpenCode, Antigravity) are effective at isolated script authoring. However, during high-severity production outages, **unsupervised agents present critical enterprise risks**:
+- They operate inside isolated terminals without team visibility or shared operational logs.
+- They infer root causes from superficial keyword matches rather than empirical reproduction.
+- They risk compounding cascading failures if granted unconstrained production write permissions.
 
-The hackathon challenge is: **Turn your solo agent into a teammate. A real task, done: Shipped, fixed, reviewed.**
+The hackathon challenge objective is: **Turn your solo agent into a teammate. A real task, done: Shipped, fixed, reviewed.**
 
-**IncidentPilot** brings four specialized AI SRE agents into team chat (Mattermost, Slack, Discord) via **Switch**, turning production troubleshooting into an orderly, human-supervised collaboration.
+**IncidentPilot** connects four specialized AI SRE agents into team chat (Mattermost, Slack, Teams, Discord) via **Switch**, turning production troubleshooting into a structured, verifiable, human-supervised engineering workflow.
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```mermaid
 graph TD
@@ -83,18 +86,18 @@ graph TD
 
 ---
 
-## 👥 The Multi-Agent Squad
+## Multi-Agent Architecture and Responsibilities
 
 | Agent Role | Switch Handle | Addressing | Responsibility |
 | :--- | :--- | :--- | :--- |
-| **Incident Commander** | `@sre-commander` | `anyone` | Manages incident FSM state, pins live war-boards, and prompts humans for sign-offs. |
-| **Diagnostic SRE** | `@sre-diagnostician` | `owner-agents` | Slices container logs, queries Prometheus metrics, and retrieves SRE runbooks via RAG. |
+| **Incident Commander** | `@sre-commander` | `anyone` | Manages incident FSM state, pins live war-boards, and coordinates human approval gates. |
+| **Diagnostic SRE** | `@sre-diagnostician` | `owner-agents` | Slices container logs, queries Prometheus metrics, and retrieves SRE runbooks via Hybrid RAG. |
 | **Debugging Engineer** | `@sre-debugger` | `owner-agents` | Reproduces bugs in sandbox (`orders-api`), captures failure traces, and drafts surgical diffs. |
 | **Adversarial Critic** | `@sre-critic` | `owner-agents` | Red-team SRE challenging root cause grounding and screening patches for side effects. |
 
 ---
 
-## 🔒 Production SRE Invariants (Beyond "AI Vibe-Coding")
+## Production SRE Safety Invariants
 
 1. **Empirical Causal Triangulation**:
    - Diagnoses are rejected unless proven in the sandbox: the minimal reproduction test must fail against the broken service and pass with the patch applied.
@@ -110,7 +113,7 @@ graph TD
 
 ---
 
-## 📊 Evaluation Benchmark (5 Scenarios)
+## Empirical Evaluation Benchmark (5 Failure Modes)
 
 Evaluated across 5 reproducible failure modes in the sandbox environment:
 
@@ -127,21 +130,21 @@ Evaluated across 5 reproducible failure modes in the sandbox environment:
 
 ---
 
-## 📁 Repository Structure
+## Repository Layout
 
 ```text
 incidentpilot/
 ├── packages/
 │   ├── domain/               # Pure business models, FSM, events, and action digests
 │   ├── application/          # Use cases, CQRS handlers, orchestrator, and circuit breakers
-│   └── infrastructure/       # Switch wire protocol, hybrid RAG retriever, and telemetry
+│   └── infrastructure/       # Switch wire protocol, hybrid RAG retriever, LLM client, telemetry
 ├── sandbox/
 │   ├── services/orders_api/  # Checkout microservice with Prometheus instrumentation
 │   ├── chaos/inject.py       # CLI chaos injector for 5 scenarios
 │   └── tests/                # Automated pytest regression suite
 ├── switch/
 │   ├── templates/            # Switch Room Template (incident-pilot.template.yaml)
-│   ├── runbooks/             # 12 real-world SRE runbooks (MIT)
+│   ├── runbooks/             # 13 real-world SRE runbooks (MIT)
 │   └── deploy/               # Local Switch + Mattermost Docker stack
 ├── evals/                    # 5-scenario evaluation benchmark harness
 ├── docs/                     # Video script, ADRs, and blog submission drafts
@@ -151,7 +154,7 @@ incidentpilot/
 
 ---
 
-## 📜 Third-Party Notices & Licenses
+## Licensing and Third-Party Attributions
 
 - **Incident Suite** (MIT License) - Runbook definitions, log parsing, and critic design.
 - **Akmatori** (Apache-2.0 License) - Human-in-the-loop approval gate concepts.

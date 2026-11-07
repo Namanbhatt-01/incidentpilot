@@ -38,10 +38,11 @@ class GeminiLiveClient:
 
     def diagnose_incident(self, error_trace: str, runbook_context: str = "") -> GeminiDiagnosis | None:
         """Call Gemini to diagnose root cause and recommend actions from raw error logs."""
-        if not self.is_available:
+        if not self.is_available or not self.api_key:
             return None
 
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent?key={self.api_key}"
+        # Pass API key via secure header rather than query string
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
 
         prompt = f"""You are @diagnostic-investigator, an autonomous SRE agent in a production incident war room.
 Analyze this live service error trace:
@@ -70,7 +71,10 @@ Return a strictly valid JSON object with the following fields:
             req = urllib.request.Request(
                 url,
                 data=json.dumps(payload).encode("utf-8"),
-                headers={"Content-Type": "application/json"},
+                headers={
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": self.api_key,
+                },
             )
             with urllib.request.urlopen(req, timeout=12) as resp:
                 data = json.loads(resp.read().decode("utf-8"))

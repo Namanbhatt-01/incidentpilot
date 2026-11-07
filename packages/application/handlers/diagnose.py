@@ -29,6 +29,7 @@ class DiagnosticHandler:
 
         raw_logs = "\n".join(log_lines)
         model_used = "deterministic-rules"
+        evidence: list[str] = []
 
         # 1. Try Live Gemini LLM if in live mode or available
         if (self.mode == "live" or self.llm_client.is_available) and raw_logs.strip():
@@ -62,7 +63,7 @@ class DiagnosticHandler:
         # 2. Fallback to deterministic log inspection
         root_cause = "Unhandled generic exception in service execution"
         runbook = "RB-001-orders-api-500.md"
-        evidence: list[str] = []
+        evidence = []
         confidence = 0.85
 
         for line in log_lines:

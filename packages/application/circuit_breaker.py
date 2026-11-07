@@ -42,7 +42,7 @@ class CircuitBreaker:
         except Exception:
             self.failure_count += 1
             self.last_failure_time = time.time()
-            if self.failure_count >= self.failure_threshold:
+            if self._state == "HALF_OPEN" or self.failure_count >= self.failure_threshold:
                 self._state = "OPEN"
             raise
 

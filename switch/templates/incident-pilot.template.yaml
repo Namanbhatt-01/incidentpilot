@@ -76,6 +76,6 @@ room:
   users: ["{$creator}"]
 
 kickoff: |
-  🚨 Production Incident War Room Active.
+  [WAR-ROOM ACTIVE] Production Incident War Room Active.
   Squad standing by: @{team}-commander (Lead), @{team}-diagnostician (Analysis), @{team}-debugger (Repro/Patch), @{team}-critic (Review).
 

@@ -516,7 +516,7 @@
             bg: '#dc2626',
             role: 'Lead',
             time: '00:01',
-            text: '🚨 <strong>P1 INCIDENT DETECTED:</strong> High error rate alert triggered on <code>orders_api:checkout</code>. Initializing war room. Handing diagnostic role lease to @diagnostic-investigator.'
+            text: '[P1 ALERT] <strong>P1 INCIDENT DETECTED:</strong> High error rate alert triggered on <code>orders_api:checkout</code>. Initializing war room. Handing diagnostic role lease to @diagnostic-investigator.'
           },
           {
             author: '@diagnostic-investigator',
@@ -524,7 +524,7 @@
             bg: '#2563eb',
             role: 'Diagnostics',
             time: '00:03',
-            text: '📊 Observability telemetry isolated culprit release <code>v2.14.0</code> (commit <code>8f3a91b</code>). Error: <code>NullPointerException: PaymentGateway.initClient()</code>. Querying Runbook RRF...'
+            text: '[TELEMETRY] Observability telemetry isolated culprit release <code>v2.14.0</code> (commit <code>8f3a91b</code>). Error: <code>NullPointerException: PaymentGateway.initClient()</code>. Querying Runbook RRF...'
           },
           {
             author: '@repro-engineer',
@@ -532,7 +532,7 @@
             bg: '#059669',
             role: 'Reproduction',
             time: '00:05',
-            text: '🧪 Replaying synthetic checkout traffic against sandbox replica: <strong>10/10 requests reproduced HTTP 500</strong>. Bug confirmed reproducible.'
+            text: '[REPRO] Replaying synthetic checkout traffic against sandbox replica: <strong>10/10 requests reproduced HTTP 500</strong>. Bug confirmed reproducible.'
           },
           {
             author: '@adversarial-critic',
@@ -540,7 +540,7 @@
             bg: '#7c3aed',
             role: 'Critic',
             time: '00:07',
-            text: '🛡️ <strong>Safety Review Passed:</strong> Blast radius strictly confined to <code>orders_api</code> container. Database schema v2.13.2 verified backward compatible. Formulating Action Digest.'
+            text: '[CRITIC] <strong>Safety Review Passed:</strong> Blast radius strictly confined to <code>orders_api</code> container. Database schema v2.13.2 verified backward compatible. Formulating Action Digest.'
           },
           {
             author: '@incident-commander',
@@ -567,7 +567,7 @@
             bg: '#dc2626',
             role: 'Lead',
             time: '00:01',
-            text: '⚠️ <strong>P2 INCIDENT DETECTED:</strong> Redis timeout spike (5000ms+). DB connection pool at 98% saturation.'
+            text: '[APPROVAL REQUIRED] <strong>P2 INCIDENT DETECTED:</strong> Redis timeout spike (5000ms+). DB connection pool at 98% saturation.'
           },
           {
             author: '@diagnostic-investigator',
@@ -575,7 +575,7 @@
             bg: '#2563eb',
             role: 'Diagnostics',
             time: '00:04',
-            text: '🔍 Root cause: Redis primary replica partitioned. Runbook RB-003 advises enabling circuit breaker fallback mode.'
+            text: '[DIAGNOSIS] Root cause: Redis primary replica partitioned. Runbook RB-003 advises enabling circuit breaker fallback mode.'
           },
           {
             author: '@adversarial-critic',
@@ -583,7 +583,7 @@
             bg: '#7c3aed',
             role: 'Critic',
             time: '00:06',
-            text: '🛡️ Fallback mode limits catalog refresh to 15s intervals. Safe for production read traffic.'
+            text: '[CRITIC] Fallback mode limits catalog refresh to 15s intervals. Safe for production read traffic.'
           },
           {
             author: '@incident-commander',
@@ -610,7 +610,7 @@
             bg: '#dc2626',
             role: 'Lead',
             time: '00:01',
-            text: '⚠️ <strong>P3 ALERT:</strong> Background worker PID 1492 lost heartbeat for 120s. Processing backlog rising.'
+            text: '[APPROVAL REQUIRED] <strong>P3 ALERT:</strong> Background worker PID 1492 lost heartbeat for 120s. Processing backlog rising.'
           },
           {
             author: '@repro-engineer',
@@ -645,7 +645,7 @@
             bg: '#dc2626',
             role: 'Lead',
             time: '00:01',
-            text: '🚨 <strong>P1 ALERT:</strong> Container <code>orders_worker</code> terminated with ExitCode 137 (OOMKilled).'
+            text: '[P1 ALERT] <strong>P1 ALERT:</strong> Container <code>orders_worker</code> terminated with ExitCode 137 (OOMKilled).'
           },
           {
             author: '@diagnostic-investigator',
@@ -680,7 +680,7 @@
             bg: '#dc2626',
             role: 'Lead',
             time: '00:01',
-            text: '⚠️ <strong>P2 ALERT:</strong> Message ID <code>msg_9941a</code> causing consumer crash loop (7 redeliveries).'
+            text: '[APPROVAL REQUIRED] <strong>P2 ALERT:</strong> Message ID <code>msg_9941a</code> causing consumer crash loop (7 redeliveries).'
           },
           {
             author: '@repro-engineer',
@@ -763,13 +763,13 @@
               ${msg.isApproval ? `
                 <div class="approval-card">
                   <div class="approval-header">
-                    <span>⚠️ HUMAN APPROVAL REQUIRED</span>
+                    <span>[APPROVAL REQUIRED] HUMAN APPROVAL REQUIRED</span>
                     <span>TOCTOU Protected</span>
                   </div>
                   <div style="font-size:12px; font-weight:600;">Proposed Action: ${msg.actionText}</div>
                   <div class="approval-digest">Action Digest: ${msg.digest}</div>
                   <div class="approval-actions" id="approvalActions">
-                    <button class="btn-approve" onclick="approveMitigation('${msg.digest}')">✅ Approve Mitigation</button>
+                    <button class="btn-approve" onclick="approveMitigation('${msg.digest}')">[APPROVED] Approve Mitigation</button>
                     <button class="btn-reject" onclick="rejectMitigation()">Reject</button>
                   </div>
                 </div>
@@ -789,7 +789,7 @@
       }
       const actions = document.getElementById('approvalActions');
       if (actions) {
-        actions.innerHTML = '<span style="color:var(--accent-green); font-weight:700; font-size:12px;">✅ Cryptographically Authorized by On-Call Engineer</span>';
+        actions.innerHTML = '<span style="color:var(--accent-green); font-weight:700; font-size:12px;">[APPROVED] Cryptographically Authorized by On-Call Engineer</span>';
       }
       document.getElementById('fsmStateText').innerText = 'STATE: RESOLVED';
       document.getElementById('metricErrorRate').innerText = '0.0%';
@@ -809,7 +809,7 @@
             <span class="msg-time">00:10</span>
           </div>
           <div>
-            🎉 <strong>Action Verified & Executed!</strong><br>
+            [RESOLVED] <strong>Action Verified & Executed!</strong><br>
             • Traffic Shifted: 100% to verified target.<br>
             • Canary Verification: 10/10 probes passed (HTTP 200).<br>
             • Post-Mortem compiled and committed to <code>evals/scorecard.md</code>.<br>

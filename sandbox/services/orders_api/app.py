@@ -9,7 +9,7 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, PlainTextResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI(
     title="IncidentPilot Orders Service & Live War Room",
@@ -19,6 +19,16 @@ app = FastAPI(
 
 STATE_FILE = Path(__file__).resolve().parents[2] / "chaos" / ".chaos_state.json"
 DEMO_HTML = Path(__file__).resolve().parents[3] / "demo.html"
+
+ALLOWED_SCENARIOS = {
+    "bad-deploy",
+    "cache-down",
+    "kill-worker",
+    "oom-worker",
+    "poison-message",
+    "http500",
+    "none",
+}
 
 # Global runtime telemetry counters
 COUNTERS = {
@@ -32,7 +42,7 @@ COUNTERS = {
 def get_current_fail_mode() -> str:
     # 1. Check explicit environment override
     env_mode = os.getenv("FAIL_MODE")
-    if env_mode and env_mode != "none":
+    if env_mode and env_mode in ALLOWED_SCENARIOS and env_mode != "none":
         return env_mode
 
     # 2. Check dynamic state file
@@ -40,6 +50,8 @@ def get_current_fail_mode() -> str:
         try:
             data = json.loads(STATE_FILE.read_text())
             active = data.get("active_scenario", "none")
+            if active not in ALLOWED_SCENARIOS:
+                return "none"
             if active == "bad-deploy":
                 return "http500"
             return active
@@ -49,9 +61,9 @@ def get_current_fail_mode() -> str:
 
 
 class OrderRequest(BaseModel):
-    item_id: str
-    quantity: int
-    customer_id: str
+    item_id: str = Field(..., min_length=1, max_length=100)
+    quantity: int = Field(default=1, ge=1, le=1000)
+    customer_id: str = Field(..., min_length=1, max_length=100)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -124,7 +136,12 @@ def api_telemetry() -> dict[str, Any]:
 
 @app.post("/api/chaos/inject/{scenario}")
 def api_inject_chaos(scenario: str) -> dict[str, Any]:
-    """Trigger a chaos scenario on the live service."""
+    """Trigger a chaos scenario on the live service with strict input validation."""
+    if scenario not in ALLOWED_SCENARIOS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid scenario '{scenario}'. Allowed: {sorted(ALLOWED_SCENARIOS)}",
+        )
     STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
     STATE_FILE.write_text(json.dumps({"active_scenario": scenario}, indent=2))
     os.environ["FAIL_MODE"] = "http500" if scenario == "bad-deploy" else scenario

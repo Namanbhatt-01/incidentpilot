@@ -45,7 +45,7 @@ def type_print(text: str, delay: float = 0.015, color: str = "") -> None:
 def banner() -> None:
     print(f"{C_ORANGE}{C_BOLD}")
     print("=" * 80)
-    print("     🚨 INCIDENTPILOT: AUTONOMOUS SRE INCIDENT RESPONSE WAR ROOM")
+    print("     INCIDENTPILOT: AUTONOMOUS SRE INCIDENT RESPONSE WAR ROOM")
     print("   Built on Switch (Mattermost / Slack) • 4-Agent Swarm • HMAC-SHA256")
     print("=" * 80)
     print(f"{C_RESET}")
@@ -63,15 +63,15 @@ def run_simulation(auto_approve: bool = False) -> None:
     banner()
     is_live = check_live_api()
     if is_live:
-        print(f"[{C_GREEN}● LIVE{C_RESET}] Connected to live target service at {API_URL}")
+        print(f"[{C_GREEN}LIVE{C_RESET}] Connected to target service at {API_URL}")
     else:
-        print(f"[{C_YELLOW}● STANDALONE{C_RESET}] Running in high-fidelity standalone replay mode")
-    print(f"[{C_CYAN}INFO{C_RESET}] War Room initialized: #incident-war-room on Switch")
+        print(f"[{C_YELLOW}STANDALONE{C_RESET}] Running in deterministic evaluation replay mode")
+    print(f"[{C_CYAN}INFO{C_RESET}] Switch Room Initialized: #incident-war-room")
     print("-" * 80)
     time.sleep(1.0)
 
     # 1. Trigger Alert
-    print(f"\n{C_RED}{C_BOLD}[09:41:02] ALERT: Prometheus P1 Alert Firing!{C_RESET}")
+    print(f"\n{C_RED}{C_BOLD}[09:41:02] [ALERT] Prometheus P1 Alert Firing{C_RESET}")
     print("  • Service:      orders-api:checkout")
     print(f"  • Error Rate:   {C_RED}48.7% (1,420 HTTP 500s in last 5 min){C_RESET}")
     print(f"  • Latency p99:  {C_YELLOW}3,840ms{C_RESET}")
@@ -86,7 +86,7 @@ def run_simulation(auto_approve: bool = False) -> None:
     # 2. Incident Commander
     print(f"\n{C_RED}{C_BOLD}[@incident-commander]{C_RESET} {C_DIM}(Role Lease: Command){C_RESET}")
     type_print(
-        "🚨 Incident INC-4091 declared P1. Assigning diagnostic role lease to @diagnostic-investigator. State transitioned to INVESTIGATING.",
+        "[COMMAND] Incident INC-4091 declared P1. Assigning diagnostic role lease to @diagnostic-investigator. State transitioned to INVESTIGATING.",
         color=C_RESET,
     )
     time.sleep(1.5)
@@ -94,10 +94,10 @@ def run_simulation(auto_approve: bool = False) -> None:
     # 3. Diagnostic Investigator
     print(f"\n{C_BLUE}{C_BOLD}[@diagnostic-investigator]{C_RESET} {C_DIM}(Role Lease: Diagnostics){C_RESET}")
     type_print(
-        "🔍 Querying telemetry and deployment metadata... Culprit commit: 8f3a91b (v2.14.0).\n"
+        "[DIAGNOSIS] Correlating telemetry and deployment metadata... Culprit commit: 8f3a91b (v2.14.0).\n"
         "   Exception isolated: TypeError: 'NoneType' object is not subscriptable in price calculation.\n"
-        "   Running BM25 + Dense RRF retriever across 13 enterprise runbooks...\n"
-        "   Found Top Match: RB-001-orders-api-500.md (RRF score: 0.94). Prescribing atomic rollback.",
+        "   Executing BM25 + Dense RRF retriever across 13 enterprise runbooks...\n"
+        "   Matched Runbook: RB-001-orders-api-500.md (RRF score: 0.94). Prescribing atomic rollback.",
         color=C_RESET,
     )
     time.sleep(1.8)
@@ -105,9 +105,9 @@ def run_simulation(auto_approve: bool = False) -> None:
     # 4. Reproduction Engineer
     print(f"\n{C_GREEN}{C_BOLD}[@repro-engineer]{C_RESET} {C_DIM}(Role Lease: Reproduction){C_RESET}")
     type_print(
-        "🧪 Replaying 10 synthetic transactional orders against sandbox container replica...\n"
+        "[REPRODUCTION] Replaying 10 synthetic transactional orders against sandbox container replica...\n"
         "   10/10 probes resulted in HTTP 500 Internal Server Error. Bug definitively reproduced in sandbox.\n"
-        "   State transitioned to REPRODUCING -> CRITIQUING.",
+        "   State transitioned to REPRODUCING -> CRITIC_REVIEW.",
         color=C_RESET,
     )
     time.sleep(1.5)
@@ -115,7 +115,7 @@ def run_simulation(auto_approve: bool = False) -> None:
     # 5. Adversarial Critic
     print(f"\n{C_MAGENTA}{C_BOLD}[@adversarial-critic]{C_RESET} {C_DIM}(Role Lease: Safety & Blast Radius){C_RESET}")
     type_print(
-        "🛡️ Blast radius analysis: Confined strictly to orders-api container.\n"
+        "[SAFETY CRITIC] Blast radius analysis: Confined strictly to orders-api container.\n"
         "   Verifying schema compatibility: v2.13.2 schema matches production database.\n"
         "   Computed HMAC-SHA256 action digest: hmac-sha256:7b98f21da90e4f3a8b27c10d5e893bf4.\n"
         "   No hallucinated parameters detected. Passing to Human Approval Gate.",
@@ -125,7 +125,7 @@ def run_simulation(auto_approve: bool = False) -> None:
 
     # 6. Interactive Approval Gate
     print(f"\n{C_YELLOW}{C_BOLD}" + "=" * 80)
-    print(" ⚠️  INTERACTIVE HUMAN APPROVAL GATE REQUIRED (TOCTOU Protected)")
+    print(" [APPROVAL GATE] HUMAN SIGN-OFF REQUIRED (TOCTOU Cryptographically Protected)")
     print("=" * 80 + f"{C_RESET}")
     print(" Proposed Mitigation: Roll back orders-api from v2.14.0 -> v2.13.2")
     print(" Target Service:      orders-api (port 8000)")
@@ -143,7 +143,7 @@ def run_simulation(auto_approve: bool = False) -> None:
             return
     else:
         time.sleep(1.5)
-        print(f"\n{C_BOLD}war-room> {C_GREEN}APPROVE{C_RESET} (Voice dictated via Wispr Flow)")
+        print(f"\n{C_BOLD}war-room> {C_GREEN}APPROVE{C_RESET} (Authorized via Wispr Flow)")
 
     # If live API is running, reset chaos
     if is_live:
@@ -154,8 +154,8 @@ def run_simulation(auto_approve: bool = False) -> None:
     time.sleep(1.0)
     print(f"\n{C_CYAN}{C_BOLD}[@incident-commander]{C_RESET} {C_DIM}(Role Lease: Execution & Verification){C_RESET}")
     type_print(
-        "⚙️ Executing verified rollback: orders-api -> v2.13.2...\n"
-        "   Shifting 100% of live production traffic to stable revision.\n"
+        "[EXECUTION] Executing verified rollback: orders-api -> v2.13.2...\n"
+        "   Shifting 100% of production traffic to stable revision.\n"
         "   Running post-mitigation canary health check: 10/10 probes passed (HTTP 200 OK).\n"
         "   Current Metrics: Error Rate: 0.0% | Latency p99: 24.5ms | Status: HEALTHY.",
         color=C_RESET,
@@ -164,14 +164,14 @@ def run_simulation(auto_approve: bool = False) -> None:
 
     # 8. Resolution & Post-Mortem
     print(f"\n{C_GREEN}{C_BOLD}" + "=" * 80)
-    print(" 🎉 INCIDENT INC-4091 DECLARED RESOLVED — MTTR: 1m 42s")
+    print(" [RESOLVED] INCIDENT INC-4091 RESOLVED — MTTR: 1m 42s")
     print("=" * 80 + f"{C_RESET}")
-    print("  • Detection to Triage:     12s")
-    print("  • Diagnosis & Runbook RAG:  28s")
-    print("  • Sandbox Reproduction:    24s")
-    print("  • Critic Verification:     14s")
+    print("  • Detection to Triage:       12s")
+    print("  • Diagnosis & Runbook RAG:   28s")
+    print("  • Sandbox Reproduction:      24s")
+    print("  • Critic Verification:       14s")
     print("  • Human Approval & Rollback: 24s")
-    print(f"  • Post-Mortem saved to:    {C_CYAN}evals/scorecard.md{C_RESET}")
+    print(f"  • Post-Mortem archived to:   {C_CYAN}evals/scorecard.md{C_RESET}")
     print("-" * 80 + "\n")
 
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from dataclasses import dataclass
 
 
@@ -14,7 +15,17 @@ class ActionDigest:
     timestamp: float
 
     def compute_sha256(self) -> str:
-        payload = f"{self.action_type}:{self.target_component}:{self.patch_diff}:{self.timestamp}"
+        # Use canonical sorted JSON serialization to prevent delimiter collisions
+        payload = json.dumps(
+            {
+                "action_type": self.action_type,
+                "target_component": self.target_component,
+                "patch_diff": self.patch_diff,
+                "timestamp": self.timestamp,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        )
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
     def short_hash(self) -> str:

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 echo "=========================================================="
-echo "    🚀 IncidentPilot: 1-Click Judge & Evaluation Runner"
+echo "    IncidentPilot: Automated Evaluation & Test Runner"
 echo "=========================================================="
 
 MODE="${1:---offline}"
@@ -41,7 +41,7 @@ echo "Step 4: Resetting Chaos State..."
 
 echo ""
 echo "=========================================================="
-echo " ✅ IncidentPilot Verification Complete!"
+echo " [OK] IncidentPilot Verification Complete"
 echo " Results saved to evals/scorecard.md"
 echo "=========================================================="
 
