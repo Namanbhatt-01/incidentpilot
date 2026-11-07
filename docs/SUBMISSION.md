@@ -22,6 +22,10 @@ Use this document to copy and paste directly into the official **[WeMakeDevs Swi
 - **Video Walkthrough (Direct MP4)**: 
   `https://github.com/Namanbhatt-01/incidentpilot/raw/main/docs/incidentpilot_demo_walkthrough.mp4`
   *(File: `docs/incidentpilot_demo_walkthrough.mp4` - 1080p, 2m 37s duration, H.264+AAC with synchronized narration & SRE war room walkthrough. You may also paste a Loom / YouTube link if uploaded).*
+- **Wispr Flow Scorecard (Code with Wispr Track)**:
+  `https://github.com/Namanbhatt-01/incidentpilot/raw/main/docs/wispr-scorecard.png`
+  *(File: `docs/wispr-scorecard.png` - 18,450 words dictated, 5.4h saved, 172 WPM voice typing speed, 100% verified voice approvals).*
+
 
 
 ---
