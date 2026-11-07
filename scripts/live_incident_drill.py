@@ -23,6 +23,7 @@ from packages.domain.digest import ActionDigest
 from packages.domain.entities import IncidentAggregate, SeverityLevel
 from packages.domain.events import IncidentState
 from packages.infrastructure.knowledge.retriever import HybridRunbookRetriever
+from packages.infrastructure.llm.gemini import GeminiLiveClient
 
 BASE_URL = "http://127.0.0.1:8000"
 RUNBOOKS_DIR = Path(__file__).resolve().parents[1] / "switch" / "runbooks"
@@ -91,13 +92,24 @@ def main() -> None:
     incident.fsm.transition_to(IncidentState.INVESTIGATING)
     print(f"   -> FSM Transitioned: {IncidentState.TRIAGED.value} -> {incident.state.value}")
 
-    # 7. Real Hybrid RRF Runbook Retrieval
+    # 7. Real Hybrid RRF Runbook Retrieval & Live Gemini LLM Reasoning
     print(f"[{C_GREEN}✓ STEP 7{C_RESET}] Querying Hybrid BM25 Retriever with live error trace...")
     matches = retriever.search(error_detail, top_k=2)
     top_match = matches[0] if matches else None
     assert top_match is not None
     print(f"   -> Top Ranked Runbook: {C_CYAN}{top_match.runbook_id}{C_RESET} (Relevance Score: {top_match.score:.2f})")
     print("   -> Prescribed Action: Atomic rollback to last known stable commit")
+
+    # Live Google Gemini AI Reasoning
+    gemini = GeminiLiveClient()
+    if gemini.is_available:
+        print(f"\n   [{C_CYAN}🧠 LIVE GEMINI INFERENCE ({gemini.model}){C_RESET}] Sending error trace to Gemini API...")
+        diag = gemini.diagnose_incident(error_trace=error_detail, runbook_context=top_match.snippet)
+        if diag:
+            print(f"   -> Gemini Root Cause:   {C_YELLOW}{diag.root_cause}{C_RESET}")
+            print(f"   -> Recommended Action:  {C_GREEN}{diag.recommended_action}{C_RESET}")
+            print(f"   -> Blast Radius:        {C_CYAN}{diag.blast_radius}{C_RESET}")
+            print(f"   -> Gemini Confidence:    {diag.confidence * 100:.0f}%")
 
     # 8. Cryptographic Action Digest
     incident.fsm.transition_to(IncidentState.REPRODUCING)
