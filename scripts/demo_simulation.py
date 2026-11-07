@@ -130,7 +130,7 @@ def run_simulation(auto_approve: bool = False) -> None:
     print(" Proposed Mitigation: Roll back orders-api from v2.14.0 -> v2.13.2")
     print(" Target Service:      orders-api (port 8000)")
     print(f" Action Digest:       {C_CYAN}hmac-sha256:7b98f21da90e4f3a8b27c10d5e893bf4{C_RESET}")
-    print(" On-Call Engineer:    Naman Bhatt (@creator)")
+    print(" On-Call Engineer:    SRE Lead (@oncall-lead)")
 
     if not auto_approve:
         print(f"\nType {C_GREEN}'APPROVE'{C_RESET} to cryptographically authorize execution:")
