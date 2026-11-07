@@ -9,12 +9,12 @@ params:
     default: "sre"
   provider:
     type: provider
-    description: Agent provider backing the sessions
-    default: [claude, codex, opencode]
+    description: Agent provider backing the sessions (Claude Code, Codex, Cursor, OpenCode, Antigravity)
+    default: [claude, codex, opencode, antigravity, cursor]
     input: advanced
   bridge:
     type: bridge
-    description: Messaging app bridge (Mattermost, Slack, Discord)
+    description: Messaging app bridge (Slack, Microsoft Teams, Discord, Telegram, Mattermost)
     default: [$first]
 
 agents:

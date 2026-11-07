@@ -25,3 +25,12 @@ def test_incident_pilot_template_schema_and_roles() -> None:
     # Verify room includes all 4 agents
     room_agents = data["room"]["agents"]
     assert len(room_agents) == 4
+
+    # Verify agent providers and bridges
+    providers = data["params"]["provider"]["default"]
+    for expected_provider in ["claude", "codex", "opencode", "antigravity", "cursor"]:
+        assert expected_provider in providers
+
+    bridge_desc = data["params"]["bridge"]["description"].lower()
+    for platform in ["slack", "teams", "discord", "telegram", "mattermost"]:
+        assert platform in bridge_desc

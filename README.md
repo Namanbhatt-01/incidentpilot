@@ -46,16 +46,22 @@ make drill        # Sends real HTTP requests, induces chaos, and verifies recove
 
 ---
 
-## Problem Statement and Architectural Alignment
+## Problem Statement and Hackathon Challenge Alignment
 
-Solo AI coding agents (Claude Code, Codex, OpenCode, Antigravity) are effective at isolated script authoring. However, during high-severity production outages, **unsupervised agents present critical enterprise risks**:
-- They operate inside isolated terminals without team visibility or shared operational logs.
-- They infer root causes from superficial keyword matches rather than empirical reproduction.
-- They risk compounding cascading failures if granted unconstrained production write permissions.
+The official hackathon challenge states:
+> *"Take an AI agent you already use, Claude Code, Codex, Cursor, OpenCode and Antigravity, connect it to Slack, Teams, Discord and Telegram with Switch, and build a workflow where it gets real work done."*
 
-The hackathon challenge objective is: **Turn your solo agent into a teammate. A real task, done: Shipped, fixed, reviewed.**
-
-**IncidentPilot** connects four specialized AI SRE agents into team chat (Mattermost, Slack, Teams, Discord) via **Switch**, turning production troubleshooting into a structured, verifiable, human-supervised engineering workflow.
+### How IncidentPilot Satisfies Each Requirement:
+1. **AI Agents You Already Use**:
+   - Built natively for **Claude Code**, **Codex**, **Cursor**, **OpenCode**, and **Antigravity**. Configured via `params.provider` in [`incident-pilot.template.yaml`](switch/templates/incident-pilot.template.yaml).
+2. **Team Communication Platforms**:
+   - Connects seamlessly to **Slack**, **Microsoft Teams**, **Discord**, **Telegram**, and **Mattermost** via Switch Room Bridges (`bridge: "{$first}"`).
+3. **Real Work Done (Shipped, Fixed, Reviewed)**:
+   - **Detected**: Ingests real-time Prometheus error spikes and raw service exceptions.
+   - **Diagnosed**: Queries 13 curated SRE runbooks using Hybrid BM25 + Dense RRF retrieval and live Google Gemini AI inference.
+   - **Fixed**: Synthesizes minimal regression reproductions and generates surgical rollback/patch diffs.
+   - **Reviewed**: An Adversarial Critic agent validates blast radius and backwards compatibility.
+   - **Shipped**: A cryptographic HMAC-SHA256 human approval gate authorizes execution, shifting traffic to healthy targets and compiling a post-mortem into permanent room documents.
 
 ---
 
