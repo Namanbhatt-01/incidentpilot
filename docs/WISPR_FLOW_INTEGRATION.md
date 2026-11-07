@@ -1,43 +1,36 @@
-# Code with Wispr Flow: Voice-Driven SRE Operations
+# Voice-Driven SRE Operations: Wispr Flow Integration Architecture
 
-*Guide for the Code with Wispr Hackathon Side Track ($500 in Cash)*
+*Integration guide for voice-enabled operations with IncidentPilot and Switch.*
 
 ---
 
 ## 1. Overview
-Wispr Flow allows developers to speak prompts, room instructions, and documentation at 3x the speed of typing. In **IncidentPilot**, voice is used as a primary input mechanism for emergency SRE incident response:
-1. **Voice-Prompting the Incident Squad**: Speaking incident triage reports during high-stress production outages.
-2. **Dictating Runbooks & Room Instructions**: Creating room templates and runbooks via natural speech.
-3. **Voice Approval of Production Patches**: Dictating sign-off commands into chat hands-free while inspecting terminal dashboards.
+
+In high-stress production outages (such as 2:00 AM PagerDuty incidents), typing long triage prompts and copying error tokens while inspecting live Grafana graphs causes context-switching and cognitive overload.
+
+**IncidentPilot** is architected to accept voice-dictated commands via tools like **Wispr Flow**:
+1. **Voice-Prompting the Incident Squad**: Dictating triage summaries directly into team chat (Mattermost, Slack, Discord).
+2. **Hands-Free Mitigation Sign-Off**: Dictating human approval commands (`@sre-commander approve`) while hands remain on terminal diagnostics.
+3. **Runbook & Room Instructions**: Creating room templates via natural conversational speech.
 
 ---
 
-## 2. Voice Prompts Used in IncidentPilot Development
+## 2. Voice Prompts Supported by IncidentPilot
 
-| Stage | Dictated Prompt (Wispr Flow) | Target Destination |
-| :--- | :--- | :--- |
-| **Room Briefing** | *"You are the incident war-room squad. Triage all incoming checkout reports, assign severity P1 to 500 errors, quote exact log lines, and require explicit human sign-off before applying any patch."* | `switch/templates/incident-pilot.template.yaml` |
-| **Incident Trigger** | *"Incident Commander, checkout is throwing HTTP 500 errors since the 09:40 deployment, investigate cart service and check database connections immediately."* | Mattermost `#sre-incident-war-room` |
-| **Human Sign-Off** | *"Incident Commander, approve patch token appr-8f3a1c and deploy to sandbox."* | Mattermost Channel |
+| Operational Phase | Dictated Voice Command | Handling Agent | Target Implementation |
+| :--- | :--- | :--- | :--- |
+| **Room Briefing** | *"You are the incident war-room squad. Triage all incoming checkout reports, assign severity P1 to 500 errors, quote exact log lines, and require explicit human sign-off before applying any patch."* | Switch Room Engine | `switch/templates/incident-pilot.template.yaml` |
+| **Emergency Triage** | *"Incident Commander, checkout is throwing HTTP 500 errors since the 09:40 deployment, investigate cart service and check database connections immediately."* | `@sre-commander` | `packages/application/handlers/triage.py` |
+| **Hands-Free Sign-Off** | *"Incident Commander, approve patch token and execute verified rollback."* | `@sre-commander` | `packages/application/handlers/approval.py` |
 
 ---
 
-## 3. Submission Scorecard (Code with Wispr Side Track)
+## 3. Submitting for the "Code with Wispr" Side Track ($500)
 
-![Wispr Flow Activity Scorecard](wispr-scorecard.png)
+If you actively use Wispr Flow on macOS to dictate prompts, runbooks, or commands during development:
+1. Open the **Wispr Flow desktop app**.
+2. Navigate to the **Insights** tab showing your personal words dictated and time saved.
+3. Take a screenshot of your active Insights dashboard.
+4. Save the screenshot and attach it to your submission form on the [WeMakeDevs Portal](https://www.wemakedevs.org/hackathons/switch/submit).
 
-### Verified Hackathon Usage Metrics:
-- **Total Words Dictated**: **18,450 words**
-- **Voice Typing Speed**: **172 WPM** (3.6x faster than keyboard baseline of 48 WPM)
-- **Time Saved**: **5.4 hours** across the 72-hour hackathon window
-- **Primary Applications**:
-  - **VS Code / IDE (48%)**: Voice-dictating room prompts, runbooks, and ADRs
-  - **Terminal / CLI (26%)**: Speaking make and docker automation commands hands-free
-  - **Switch War Room (18%)**: Emergency triage voice prompts and hands-free sign-off (`@sre-commander approve`)
-  - **Documentation & Post-Mortems (8%)**: Drafting root cause analysis notes
-
-### Submission File:
-- Scorecard Image: [`docs/wispr-scorecard.png`](wispr-scorecard.png)
-- Direct Image URL: `https://github.com/Namanbhatt-01/incidentpilot/raw/main/docs/wispr-scorecard.png`
-
-
+> **Note on Submission Hygiene**: Do not submit mock or synthetic scorecard metrics. Only submit an authentic screenshot from your active Wispr Flow client. If you did not use voice dictation during the build, leave the Code with Wispr side track unchecked.

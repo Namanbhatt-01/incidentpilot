@@ -52,7 +52,7 @@ This script is tailored specifically for the **Flip the Switch Hackathon** judgi
 ## Act 5: Benchmark & Outro (2:45 - 3:00)
 - **Visual**: Show `evals/scorecard.md` table on screen.
 - **Narrator**:
-  > *"Across our 5-scenario evaluation benchmark, IncidentPilot delivers an average MTTR reduction of over 98% with 100% safety compliance.
+  > *"Across our 5-scenario evaluation benchmark, IncidentPilot delivers an average MTTR reduction of over 93% with 100% safety compliance.
   > Solo agents made you code faster; Switch turns them into your best teammates.
   > Thank you!"*
 

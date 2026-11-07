@@ -5,7 +5,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 [![Switch Protocol](https://img.shields.io/badge/Switch-Agent%20Protocol%20v1-orange.svg)](https://docs.switchagents.ai)
-[![Test Suite](https://img.shields.io/badge/Pytest-27%20Passed-brightgreen.svg)](https://github.com/Namanbhatt-01/incidentpilot)
+[![Test Suite](https://img.shields.io/badge/Pytest-24%20Passed-brightgreen.svg)](https://github.com/Namanbhatt-01/incidentpilot)
 
 Built for the **[Flip the Switch Hackathon](https://www.wemakedevs.org/hackathons/switch)** (Powered by **WeMakeDevs** & **DevTools Academy**).
 

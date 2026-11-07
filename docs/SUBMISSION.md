@@ -12,21 +12,16 @@ Use this document to copy and paste directly into the official **[WeMakeDevs Swi
 - **Primary Track**: 
   **Track 01: Best Business Workflow ($2,000 in Cash)**
 - **Side Tracks**:
-  - **Code with Wispr ($500 in Cash)** *(Voice-driven SRE operations & Wispr scorecard included)*
-  - **Best Blog (AirPods 5)** *(Comprehensive architecture breakdown ready for Dev.to / Hashnode / Medium)*
-  - **#HowISwitch (Logitech Mechanical Keyboard)** *(Social showcase posts prepared)*
+  - **Best Blog (AirPods 5)** *(Architecture breakdown published in `docs/BLOG_POST_DRAFT.md`)*
+  - **#HowISwitch (Logitech Mechanical Keyboard)** *(Social showcase posts in `docs/SOCIAL_HOWISWITCH.md`)*
+  - *(Optional) Code with Wispr: If you actively use the Wispr Flow macOS client, attach your authentic screenshot as documented in `docs/WISPR_FLOW_INTEGRATION.md`.*
 - **Team Code**: `9YC3BJ`
 - **Team Leader**: Naman Bhatt (`@namanbhatt`)
 - **Public GitHub Repository**: 
   `https://github.com/Namanbhatt-01/incidentpilot`
 - **Video Walkthrough (Direct MP4)**: 
   `https://github.com/Namanbhatt-01/incidentpilot/raw/main/docs/incidentpilot_demo_walkthrough.mp4`
-  *(File: `docs/incidentpilot_demo_walkthrough.mp4` - 1080p, 2m 37s duration, H.264+AAC with synchronized narration & SRE war room walkthrough. You may also paste a Loom / YouTube link if uploaded).*
-- **Wispr Flow Scorecard (Code with Wispr Track)**:
-  `https://github.com/Namanbhatt-01/incidentpilot/raw/main/docs/wispr-scorecard.png`
-  *(File: `docs/wispr-scorecard.png` - 18,450 words dictated, 5.4h saved, 172 WPM voice typing speed, 100% verified voice approvals).*
-
-
+  *(File: `docs/incidentpilot_demo_walkthrough.mp4` - 1080p Full HD, 2m 37s duration, H.264+AAC with synchronized narration & SRE war room walkthrough).*
 
 ---
 
@@ -44,8 +39,8 @@ The hackathon challenge mandates:
 > *"Take an AI agent you already use, Claude Code, Codex, Cursor, OpenCode and Antigravity, connect it to Slack, Teams, Discord and Telegram with Switch, and build a workflow where it gets real work done (Shipped, fixed, reviewed)."*
 
 1. **AI Agents You Already Use**:
-   - Supports Claude Code, Codex, Cursor, OpenCode, and Antigravity via Switch Room Template provider variables (`provider: "{provider}"`).
-   - Powered by Google Gemini 3.1 Flash Lite for ultra-low latency real-time inference during live drills.
+   - Supports Claude Code, Codex, Cursor, OpenCode, and Antigravity via Switch Room Template provider variables (`provider: "{provider}"` in [`switch/templates/incident-pilot.template.yaml`](switch/templates/incident-pilot.template.yaml)).
+   - Backed by Google Gemini 3.1 Flash Lite inference (`packages/infrastructure/llm/gemini.py`) with deterministic replay fallback.
 2. **Team Chat Integrations**:
    - Integrates natively with Slack, Microsoft Teams, Discord, Telegram, and Mattermost through Switch Room Bridges (`bridge: "{$first}"`).
 3. **Real Work Done (Shipped, Fixed, Reviewed)**:
@@ -57,14 +52,21 @@ The hackathon challenge mandates:
 
 ---
 
-## 4. Key Engineering Differentiators
+## 4. Code-Verified Architecture & Real Implementations
 
-- **Cryptographic Action Digests (TOCTOU Prevention)**: High-risk remediation actions are canonicalized and signed via HMAC-SHA256 digests. If anything changes between proposal and sign-off, the execution safely aborts.
-- **Empirical Causal Triangulation**: Diagnoses are rejected unless proven in the sandbox: the test must fail against the broken service and pass with the patch applied.
-- **Distributed Role Leases**: Utilizes Switch native exclusive leases with 2-second heartbeats and 6-second TTL sweeps to eliminate split-brain execution across multiple concurrent agents.
-- **Live Chaos Microservice**: Includes a real FastAPI transactional microservice (`orders-api`) with 5 parameterized chaos failure modes and Prometheus metrics export.
-- **Interactive War Room Dashboard**: Full visual war room served directly at `http://127.0.0.1:8000/` for interactive scenario evaluation and live status synchronization.
-- **Enterprise Code Quality**: 100% green CI pipeline on GitHub Actions, zero linter errors (`ruff`), strict type checking (`mypy`), and 24 passing unit and integration tests.
+Every technical feature is backed by real, test-covered code in the repository:
+
+| Feature / Claim | Real Code Implementation | Verified Invariant |
+| :--- | :--- | :--- |
+| **Strict SRE State Machine** | [`packages/domain/fsm.py`](packages/domain/fsm.py) | `IncidentFSM` enforces strict DAG transitions (`MONITORING` &rarr; `DIAGNOSING` &rarr; `CRITIC_REVIEW` &rarr; `AWAITING_APPROVAL` &rarr; `REMEDIATING` &rarr; `RESOLVED`). |
+| **Cryptographic Action Digests** | [`packages/domain/digest.py`](packages/domain/digest.py) | Canonical JSON normalization + HMAC-SHA256 signing preventing TOCTOU tampering of remediation actions. |
+| **Four-Eyes Human Approval** | [`packages/application/handlers/approval.py`](packages/application/handlers/approval.py) | Zero production mutations without explicit signature verification (`@sre-commander approve`). |
+| **Empirical Sandbox Repro** | [`sandbox/services/orders_api/app.py`](sandbox/services/orders_api/app.py) & [`sandbox/chaos/inject.py`](sandbox/chaos/inject.py) | Live microservice with 5 parameterized failure modes (HTTP 500, Redis cache stop, worker crash, OOM, poison pill). |
+| **Hybrid BM25 + Dense RRF** | [`packages/infrastructure/knowledge/retriever.py`](packages/infrastructure/knowledge/retriever.py) | Hybrid lexical + dense Reciprocal Rank Fusion ($1 / (60 + \text{rank})$) across 13 curated SRE runbooks. |
+| **Switch Wire Protocol Transport** | [`packages/infrastructure/switch/transport.py`](packages/infrastructure/switch/transport.py) | Server-Sent Events (SSE) streaming client + 2.0-second background heartbeat loop. |
+| **Living Room Documents** | [`packages/infrastructure/switch/document_sync.py`](packages/infrastructure/switch/document_sync.py) | Synchronizes `incident-warboard.md` directly into the room via `create_room_document`. |
+| **Automated 1080p Video Generator** | [`scripts/generate_video.py`](scripts/generate_video.py) | Chrome Headless rendering + macOS speech synthesis + FFmpeg H.264/AAC encoding. |
+| **Automated Evaluation Benchmark** | [`evals/benchmark.py`](evals/benchmark.py) | 5-scenario benchmark measuring latency, diagnosis accuracy, and MTTR reduction. |
 
 ---
 
@@ -88,9 +90,8 @@ The hackathon challenge mandates:
 
 - **Switch Core & Protocol**: Switch Agent Protocol (SSE Streaming, HTTP Operations, Room Documents, Role Leases).
 - **Backend & Target Sandbox**: Python 3.11+, FastAPI, Uvicorn, Pydantic v2, Pytest.
-- **LLM Engine**: Google Gemini API (gemini-3.1-flash-lite).
+- **LLM Engine**: Google Gemini API (`gemini-3.1-flash-lite`).
 - **Knowledge & Retrieval**: Hybrid BM25 + Dense RRF retriever, SRE Markdown Runbook catalog.
 - **Telemetry & Observability**: Prometheus metrics exporter, OpenTelemetry trace schemas.
 - **Security**: Cryptographic HMAC-SHA256 canonical action digests.
 - **Attributions**: Runbook catalog adapted from `incident-suite` (MIT); approval gate concepts adapted from `akmatori` (Apache-2.0). All under [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-

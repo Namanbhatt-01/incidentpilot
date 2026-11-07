@@ -17,7 +17,7 @@ We built IncidentPilot for the Flip the Switch Hackathon powered by @WeMakeDevs!
 4. Adversarial Critic validates the patch
 5. Enforces Four-Eyes human sign-off before applying fix
 
-Result: 98% MTTR reduction with zero unapproved production mutations.
+Result: >93% MTTR reduction with zero unapproved production mutations.
 
 This is #HowISwitch. 
 Check out our repo: https://github.com/Namanbhatt-01/incidentpilot
