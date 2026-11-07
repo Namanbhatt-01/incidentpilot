@@ -19,4 +19,6 @@ htmlcov/
 pgdata/
 mmdata/
 .last_injection.json
+docs/video_assets/
+
 

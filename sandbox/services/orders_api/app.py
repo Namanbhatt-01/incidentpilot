@@ -42,7 +42,11 @@ COUNTERS = {
 def get_current_fail_mode() -> str:
     # 1. Check explicit environment override
     env_mode = os.getenv("FAIL_MODE")
-    if env_mode and env_mode in ALLOWED_SCENARIOS and env_mode != "none":
+    if env_mode and env_mode in ALLOWED_SCENARIOS:
+        if env_mode == "none":
+            return "none"
+        if env_mode == "bad-deploy":
+            return "http500"
         return env_mode
 
     # 2. Check dynamic state file

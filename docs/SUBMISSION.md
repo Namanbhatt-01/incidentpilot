@@ -19,8 +19,10 @@ Use this document to copy and paste directly into the official **[WeMakeDevs Swi
 - **Team Leader**: Naman Bhatt (`@namanbhatt`)
 - **Public GitHub Repository**: 
   `https://github.com/Namanbhatt-01/incidentpilot`
-- **Video Walkthrough URL**: 
-  *[Paste your 2-to-3 minute Loom / YouTube link here]*
+- **Video Walkthrough (Direct MP4)**: 
+  `https://github.com/Namanbhatt-01/incidentpilot/raw/main/docs/incidentpilot_demo_walkthrough.mp4`
+  *(File: `docs/incidentpilot_demo_walkthrough.mp4` - 1080p, 2m 37s duration, H.264+AAC with synchronized narration & SRE war room walkthrough. You may also paste a Loom / YouTube link if uploaded).*
+
 
 ---
 
@@ -87,3 +89,4 @@ The hackathon challenge mandates:
 - **Telemetry & Observability**: Prometheus metrics exporter, OpenTelemetry trace schemas.
 - **Security**: Cryptographic HMAC-SHA256 canonical action digests.
 - **Attributions**: Runbook catalog adapted from `incident-suite` (MIT); approval gate concepts adapted from `akmatori` (Apache-2.0). All under [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
