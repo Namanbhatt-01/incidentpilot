@@ -12,7 +12,7 @@ Use this document to copy and paste directly into the official **[WeMakeDevs Swi
 - **Primary Track**: 
   **Track 01: Best Business Workflow ($2,000 in Cash)**
 - **Side Tracks**:
-  - **Best Blog (AirPods 5)** *(Architecture breakdown published in `docs/BLOG_POST_DRAFT.md`)*
+  - **Best Blog (AirPods 5)**: `https://dev.to/reverser_101/turning-solo-ai-agents-into-an-sre-incident-squad-with-switch-5cgn`
   - **#HowISwitch (Logitech Mechanical Keyboard)** *(Social showcase posts in `docs/SOCIAL_HOWISWITCH.md`)*
   - *(Optional) Code with Wispr: If you actively use the Wispr Flow macOS client, attach your authentic screenshot as documented in `docs/WISPR_FLOW_INTEGRATION.md`.*
 - **Team Code**: `9YC3BJ`
