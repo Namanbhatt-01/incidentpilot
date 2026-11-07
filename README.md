@@ -17,7 +17,7 @@ You can run and evaluate the entire IncidentPilot multi-agent platform with a si
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/your-username/incidentpilot.git
+git clone https://github.com/Namanbhatt-01/incidentpilot.git
 cd incidentpilot
 
 # 2. Option A: Launch Live Target Service & Interactive War Room (Port 8000)
