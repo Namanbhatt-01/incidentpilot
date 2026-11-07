@@ -11,6 +11,15 @@ Built for the **[Flip the Switch Hackathon](https://www.wemakedevs.org/hackathon
 
 ---
 
+## Demo Video Walkthrough
+
+![IncidentPilot 1080p Demo Walkthrough](docs/demo_preview.gif)
+
+> **Full 1080p Video (2m 37s)**: [Download or Stream Raw MP4](docs/incidentpilot_demo_walkthrough.mp4) &bull; Generated natively with Chrome Headless, macOS Speech Synthesis, and FFmpeg via [`scripts/generate_video.py`](scripts/generate_video.py).
+
+
+---
+
 ## Quickstart and Live Service Ports
 
 You can execute and evaluate the complete IncidentPilot platform locally with a single command — **no external API keys required**:
